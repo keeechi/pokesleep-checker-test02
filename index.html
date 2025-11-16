@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>寝顔チェッカー for ポケモンスリープ</title>
+
+  <!-- Google Fonts（やわらかめ） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="manifest" href="./manifest.webmanifest?v=3">
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon-180.png">
+  <link rel="icon" sizes="192x192" href="./assets/icons/app-icon-192.png">
+  <link rel="icon" sizes="512x512" href="./assets/icons/app-icon-512.png">
+
+<!-- 既存 -->
+<!-- <script src="app.js" defer></script> -->
+
+<!-- 追加の軽いスタイル（必要なら既存style.cssに移動OK） -->
+
+  <style>
+    :root { --cell-checked-bg: rgba(13,110,253,.1); }
+    body { font-family: "M PLUS Rounded 1c", system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif; }
+    .cell-checked { background: var(--cell-checked-bg); }
+    .cell-disabled { color: #6c757d; }
+    .cell-absent { color: #adb5bd; } /* 存在しない寝顔（チェックボックス自体を出さない） */
+  </style>
+
+  <link rel="stylesheet" href="./style.css"><!-- あれば -->
+</head>
+<body>
+  <header class="container py-3">
+    <h1 class="h3 mb-0">寝顔チェッカー for ポケモンスリープ</h1>
+  </header>
+
+  <main class="container">
+    <div id="pwaBanner" class="alert alert-info d-none" role="status" style="margin-bottom:12px;">
+  <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+    <div class="flex-grow-1">
+      このツールはホーム画面に追加してアプリのように使えます。
+      <span id="pwaIosHint" class="text-muted d-none">
+        iPhone/iPad は Safari の共有ボタン →「ホーム画面に追加」
+      </span>
+    </div>
+    <div class="d-flex gap-2">
+      <button id="pwaInstallBtn" class="btn btn-primary btn-sm">ホームに追加</button>
+      <button id="pwaCloseBtn" class="btn btn-outline-secondary btn-sm">閉じる</button>
+    </div>
+  </div>
+</div>
+    <!-- Summary（タイトル行は削除） -->
+    <section id="summary" class="mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div id="summaryGrid" class="table-responsive"><!-- JSで挿入 --></div>
+        </div>
+      </div>
+    </section>
+
+<!-- Tabs -->
+<div id="mainTabsWrap" class="sticky-top bg-white pt-1" style="top:0;">
+  <ul class="nav nav-tabs flex-nowrap" id="mainTabs" role="tablist">
+    <li class="nav-item nav-item--howto" role="presentation">
+      <button id="tab-howto" type="button" class="nav-link nav-link--howto" aria-expanded="false">
+        <span class="tab-label">
+          <span class="l1">つかい</span>
+          <span class="l2">かた</span>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active tab-icon"
+        id="tab-allfaces"
+        data-bs-toggle="tab"
+        data-bs-target="#pane-allfaces"
+        type="button"
+        role="tab"
+        aria-label="全寝顔チェックシート"
+        title="全寝顔チェックシート"
+      >
+        <span class="tab-inner">
+          <img class="tab-img" src="assets/icons/tabs/icon_tab_01.png" alt="">
+          <span class="tab-label">
+            <span class="l1">全寝顔</span>
+            <span class="l2">一覧</span>
+          </span>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link tab-icon"
+        id="tab-byfield"
+        data-bs-toggle="tab"
+        data-bs-target="#pane-byfield"
+        type="button"
+        role="tab" aria-selected="false"
+        role="tab"
+        aria-label="フィールド別寝顔一覧"
+        title="フィールド別寝顔一覧"
+      >
+        <span class="tab-inner">
+          <img class="tab-img" src="assets/icons/tabs/icon_tab_02.png" alt="">
+          <span class="tab-label">
+            <span class="l1">フィールド別</span>
+            <span class="l2">寝顔一覧</span>
+          </span>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link tab-icon"
+        id="tab-search"
+        data-bs-toggle="tab"
+        data-bs-target="#pane-search"
+        type="button"
+        role="tab" aria-selected="false"
+        role="tab"
+        aria-label="現在のフィールド・ランクから検索"
+        title="現在のフィールド・ランクから検索"
+      >
+        <span class="tab-inner">
+          <img class="tab-img" src="assets/icons/tabs/icon_tab_03.png" alt="">
+          <span class="tab-label">
+            <span class="l1">フィールド</span>
+            <span class="l2">ランク</span>
+            <span class="l3">から検索</span>
+          </span>
+        </span>
+      </button>
+    </li>
+
+    <!-- ▼ 新タブ：未取得寝顔の早見表（ポップアップ起動用） -->
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link tab-icon"
+        id="tab-quickmissing"
+        type="button"
+        role="tab" aria-selected="false"
+        aria-label="未取得寝顔の早見表"
+        title="未取得寝顔の早見表"
+      >
+        <span class="tab-inner">
+          <img class="tab-img" src="assets/icons/tabs/icon_tab_04.png" alt="">
+          <span class="tab-label">
+            <span class="l1">未取得</span>
+            <span class="l2">寝顔の</span>
+            <span class="l3">早見表</span>
+          </span>
+        </span>
+      </button>
+    </li>
+
+    <!-- ハンバーガー -->
+    <li class="nav-item nav-item--more" role="presentation">
+      <button class="nav-link tab-icon" id="tab-menu" type="button"
+              aria-label="その他機能" title="その他機能"
+              data-bs-toggle="offcanvas" data-bs-target="#moreSheet" aria-controls="moreSheet">
+        <img class="tab-img" src="assets/icons/tabs/icon_hamburger.png" alt="">
+      </button>
+    </li>
+  </ul>
+</div>  <!-- ★ ここで mainTabsWrap を閉じる -->
+
+    <div class="tab-content pb-5" id="mainTabsContent">
+      <!-- 全寝顔チェックシート -->
+      <div class="tab-pane fade show active pt-1" id="pane-allfaces" role="tabpanel" aria-labelledby="tab-allfaces">
+        <div class="card">
+          <div class="card-body">
+            <div class="row g-2 align-items-end mb-3" id="allfacesFilters">
+              <div class="col-12 col-md-6">
+                <label class="form-label">名前検索</label>
+                <input id="searchName" class="form-control" placeholder="例）きも → キモリ / ヤルキモノ がヒット">
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">睡眠タイプ</label>
+                <select id="filterStyle" class="form-select">
+                  <option value="">すべて</option>
+                  <option value="うとうと">うとうと</option>
+                  <option value="すやすや">すやすや</option>
+                  <option value="ぐっすり">ぐっすり</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">並び替え</label>
+                <select id="sortBy" class="form-select">
+                  <option value="no-asc">No昇順</option>
+                  <option value="no-desc">No降順</option>
+                  <option value="name-asc">名前昇順</option>
+                  <option value="name-desc">名前降順</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">取得状況</label>
+                <select id="allfacesGetStatus" class="form-select">
+                  <option value="すべて">すべて</option>
+                  <option value="コンプリート済">コンプリート済</option>
+                  <option value="未取得あり">未取得あり</option>
+                </select>
+            </div>
+            </div>
+
+            <!-- 全体一括ON/OFF（確認ダイアログは維持） -->
+              <div class="d-flex flex-wrap gap-2 mb-2" id="allfacesBulkBar">
+                <button id="btnAllOn" class="btn btn-outline-primary btn-sm">すべて一括ON</button>
+                <button id="btnAllOff" class="btn btn-outline-secondary btn-sm">すべて一括OFF</button>
+                <span class="text-muted small ms-auto">※ 現在の絞り込み結果に対して適用</span>
+              </div>
+
+            <div class="table-responsive" id="allFacesTableWrap">
+              <table class="table table-sm align-middle table-hover mb-0" id="allFacesTable">
+            <thead class="table-light sticky-header">
+              <tr>
+                <th style="min-width:72px;width:60px;">ポケモン</th>
+                <th class="text-center" style="min-width:42px;">☆1</th>
+                <th class="text-center" style="min-width:42px;">☆2</th>
+                <th class="text-center" style="min-width:42px;">☆3</th>
+                <th class="text-center" style="min-width:42px;">☆4</th>
+                <th class="text-center" style="min-width:42px;">行まとめ</th>
+              </tr>
+            </thead>
+                <tbody><!-- JSで描画 --></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- フィールド別寝顔一覧 -->
+      <div class="tab-pane fade pt-1" id="pane-byfield" role="tabpanel" aria-labelledby="tab-byfield">
+        <div class="card">
+          <div class="card-body">
+            <div class="row g-2 align-items-end mb-3" id="byfieldFilters">
+            <div class="col-12 col-md-6">
+              <label class="form-label">名前検索</label>
+              <input id="byfieldSearchName" class="form-control" placeholder="例）きも → キモリ / ヤルキモノ がヒット">
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">睡眠タイプ</label>
+              <select id="byfieldFilterStyle" class="form-select">
+                <option value="">すべて</option>
+                <option value="うとうと">うとうと</option>
+                <option value="すやすや">すやすや</option>
+                <option value="ぐっすり">ぐっすり</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">並び替え</label>
+              <select id="byfieldSortBy" class="form-select">
+                <option value="no-asc">No昇順</option>
+                <option value="no-desc">No降順</option>
+                <option value="name-asc">名前昇順</option>
+                <option value="name-desc">名前降順</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">取得状況</label>
+              <select id="byfieldGetStatus" class="form-select">
+                <option value="すべて">すべて</option>
+                <option value="コンプリート済">コンプリート済</option>
+                <option value="未取得あり">未取得あり</option>
+              </select>
+            </div>
+          </div>
+            <ul class="nav nav-pills mb-3" id="fieldTabs" role="tablist"><!-- JS --></ul>
+            <div class="tab-content" id="fieldTabsContent"><!-- JS --></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 現在のフィールド・ランクから検索 -->
+      <div class="tab-pane fade pt-1" id="pane-search" role="tabpanel" aria-labelledby="tab-search">
+        <div class="card">
+          <div class="card-body">
+            <div class="row g-2 align-items-end mb-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label">フィールド</label>
+                <select id="searchField" class="form-select"></select>
+              </div>
+              <div class="col-12 col-md-6">
+                  <label class="form-label">ランク</label>
+                  <select id="searchRank" class="form-select"></select>
+              </div>
+            </div>
+            <!-- <p class="text-muted small mb-2">選択ランク以下で出現する「未入手」の寝顔のみ表示します。</p> -->
+            <div class="table-responsive">
+              <table class="table table-sm align-middle table-hover mb-0" id="rankSearchTable">
+                <thead class="table-light sticky-header">
+                  <tr>
+                    <th>ポケモン</th>
+                    <th>睡眠タイプ</th>
+                    <th>レア度</th>
+                    <th>出現ランク</th>
+                  </tr>
+                </thead>
+                <tbody><!-- JSで描画 --></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- バックアップ・復旧 -->
+      <div class="tab-pane fade pt-1" id="pane-backup" role="tabpanel" aria-labelledby="tab-backup">
+        <div class="card">
+          <div class="card-body">
+              <div class="mb-3 d-flex flex-wrap gap-2">
+                <button id="btnExportText" class="btn btn-primary">バックアップ用テキストを作成</button>
+                <button id="btnImportText" class="btn btn-outline-primary">テキストから復旧</button>
+              </div>
+
+              <div class="mb-2">
+                <textarea id="backupText" class="form-control" rows="4"
+                  placeholder="ここにバックアップ用テキストが表示されます。復旧する場合は、ここに貼り付けて『テキストから復旧』を押してください。"></textarea>
+                <div class="form-text">
+                  ※ このテキストをメモアプリ等に保存しておけば、あとで貼り付けて復旧できます。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="container py-4 text-center text-muted small">
+    &copy; 2025 寝顔チェッカー（非公式ファンツール）
+  </footer>
+
+  <!-- その他機能：下から出るアクションシート風メニュー -->
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="moreSheet"
+       aria-labelledby="moreSheetLabel" data-bs-scroll="false" data-bs-backdrop="true">
+    <div class="offcanvas-header">
+      <h5 class="mb-0" id="moreSheetLabel">その他機能</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="閉じる"></button>
+    </div>
+    <div class="offcanvas-body pt-2">
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action"
+           data-open-pane="#pane-backup" data-bs-dismiss="offcanvas">バックアップ</a>
+        <!-- 追加したい機能は下に足すだけ -->
+        <!-- <a href="#" class="list-group-item list-group-item-action"
+             data-open-pane="#pane-sample" data-bs-dismiss="offcanvas">新機能サンプル01</a> -->
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('[data-open-pane]');
+    if (!a) return;
+    e.preventDefault();
+  
+    const sel  = a.getAttribute('data-open-pane');
+    const pane = document.querySelector(sel);
+    if (!pane) return;
+  
+    // 既存アクティブを解除して対象パネルを表示
+    document.querySelector('#mainTabs .nav-link.active')?.classList.remove('active');
+    document.querySelector('.tab-pane.show.active')?.classList.remove('show','active');
+    pane.classList.add('show','active');
+  
+    // タブの直下まで軽くスクロール（好みで）
+    const wrap = document.getElementById('mainTabsWrap');
+    if (wrap) {
+      const y = wrap.getBoundingClientRect().bottom + window.pageYOffset + 8;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+</script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./app.js" defer></script>
+
+<div id="howtoBackdrop" class="howto-backdrop" hidden></div>
+<div id="howtoSheet" class="howto-sheet" role="dialog" aria-modal="true" aria-labelledby="howtoTitle" hidden>
+  <div class="howto-sheet__handle" aria-hidden="true"></div>
+  <div class="howto-sheet__header">
+    <h5 id="howtoTitle" class="mb-0">つかいかた</h5>
+    <button type="button" class="btn-close howto-sheet__close" aria-label="閉じる"></button>
+  </div>
+  <div class="howto-sheet__body">
+    <p class="howto-sec-title"><b>全寝顔一覧</b></p>
+    <ul class="howto-list small">
+      <li>このシートから取得チェック(ON/OFF)を切り替えられます。</li>
+    </ul>
+
+    <p class="howto-sec-title"><b>フィールド別寝顔一覧</b></p>
+    <ul class="howto-list small">
+      <li>各フィールドで出現する寝顔の一覧を確認できます。</li>
+      <li>このシートからも取得チェック(ON/OFF)を切り替えられます。</li>
+    </ul>
+
+    <p class="howto-sec-title"><b>フィールド・ランクから検索</b></p>
+    <ul class="howto-list small">
+      <li>「フィールド」「ランク」や「取得状況」などから検索ができます。</li>
+      <li>このシートからも取得チェック(ON/OFF)を切り替えられます。</li>
+      <li>未取得の寝顔数などを確認しつつ「今日はどの睡眠タイプを狙おうか」といった使い方もしてみてください。</li>
+    </ul>
+  </div>
+</div>
+  
+</body>
+</html>
