@@ -853,6 +853,8 @@ function entKey(ent){ return String(ent.iconNo || ent.no); }                 // 
 
 // ★ フィルター用のデフォルト値
 function createDefaultFilters() {
+  const firstField = FIELD_KEYS[0] || '';  // 例: 'ワカクサ本島'
+
   return {
     allfaces: {
       searchName: '',
@@ -865,9 +867,11 @@ function createDefaultFilters() {
       style: '',
       sortBy: 'no-asc',
       getStatus: 'すべて',
+      // ▼ フィールド別タブで、どのマップが選択されているか
+      field: firstField,
     },
     rank: {
-      field: FIELD_KEYS[0] || '',
+      field: firstField,
       rank: 1,
       type: '',
       status: 'すべて',
@@ -952,6 +956,20 @@ function resetAllfacesFilters(state) {
   applyAllfacesFiltersFromState(state);
 }
 
+// ★ byfield.filters.field から「アクティブなフィールドタブ」を切り替える
+function setActiveFieldTab(fieldKey) {
+  const idx = FIELD_KEYS.indexOf(fieldKey);
+  const index = idx >= 0 ? idx : 0;
+
+  const btns = document.querySelectorAll('#fieldTabs button[data-bs-toggle="tab"]');
+  const btn = btns[index];
+  if (!btn) return;
+
+  // Bootstrap 5 の Tab API で公式に切り替える
+  const tab = bootstrap.Tab.getOrCreateInstance(btn);
+  tab.show();
+}
+
 // --- フィールド別寝顔一覧 ---
 function applyByfieldFiltersFromState(state) {
   const f = state.filters?.byfield || {};
@@ -988,9 +1006,16 @@ function updateByfieldFiltersFromDOM(state) {
 function resetByfieldFilters(state) {
   if (!state.filters) state.filters = {};
   const def = createDefaultFilters();
+
+  // ★ フィルター値をデフォルトに戻す（field も含む）
   state.filters.byfield = Object.assign({}, def.byfield);
   saveState(state);
+
+  // 入力欄を反映
   applyByfieldFiltersFromState(state);
+
+  // ★ タブもデフォルトフィールドに戻す
+  setActiveFieldTab(def.byfield.field);
 }
 
 // --- フィールド・ランクから検索（逆引き） ---
@@ -1547,14 +1572,33 @@ function firstStyleKey(ent){
 }
 
 function setupFieldTabs() {
-  const tabsUl = document.getElementById('fieldTabs');
+  const tabsUl  = document.getElementById('fieldTabs');
   const content = document.getElementById('fieldTabsContent');
-  tabsUl.innerHTML = FIELD_KEYS.map((f,i)=>`
+  if (!tabsUl || !content) return;
+
+  // ★ 保存済みの「選択中フィールド」を見る
+  const state = loadState();
+  const activeField = state?.filters?.byfield?.field || FIELD_KEYS[0];
+
+  // タブ（ボタン）側
+  tabsUl.innerHTML = FIELD_KEYS.map((f, i) => `
     <li class="nav-item" role="presentation">
-      <button class="nav-link ${i===0?'active':''}" data-bs-toggle="tab" data-bs-target="#pane-field-${i}" type="button" role="tab">${FIELD_SHORT[f]}</button>
-    </li>`).join('');
-  content.innerHTML = FIELD_KEYS.map((f,i)=>`
-    <div class="tab-pane fade ${i===0?'show active':''}" id="pane-field-${i}" role="tabpanel">
+      <button
+        class="nav-link ${f === activeField ? 'active' : ''}"
+        data-bs-toggle="tab"
+        data-bs-target="#pane-field-${i}"
+        type="button"
+        role="tab"
+      >
+        ${FIELD_SHORT[f]}
+      </button>
+    </li>
+  `).join('');
+
+  // パネル側
+  content.innerHTML = FIELD_KEYS.map((f, i) => `
+    <div class="tab-pane fade ${f === activeField ? 'show active' : ''}"
+         id="pane-field-${i}" role="tabpanel">
       <div class="table-responsive">
         <table class="table table-sm align-middle table-hover mb-0">
           <thead class="table-light">
@@ -1570,7 +1614,28 @@ function setupFieldTabs() {
           <tbody data-field="${f}"></tbody>
         </table>
       </div>
-    </div>`).join('');
+    </div>
+  `).join('');
+
+  // ★ タブ切り替え時に state.filters.byfield.field を更新
+  tabsUl.addEventListener('shown.bs.tab', (e) => {
+    const btn    = e.target;                               // アクティブになったタブボタン
+    const target = btn.getAttribute('data-bs-target') || '';
+    const m = target.match(/pane-field-(\d+)/);
+    if (!m) return;
+
+    const idx = parseInt(m[1], 10);
+    const fieldKey = FIELD_KEYS[idx];
+    if (!fieldKey) return;
+
+    const st  = loadState();
+    const def = createDefaultFilters();
+    if (!st.filters) st.filters = {};
+    if (!st.filters.byfield) st.filters.byfield = Object.assign({}, def.byfield);
+
+    st.filters.byfield.field = fieldKey;
+    saveState(st);
+  });
 }
 
 // フィールド別のフィルター UI
