@@ -1844,7 +1844,9 @@ function buildReverseFilterBar() {
     const st = loadState();
     resetRankFilters(st);
     renderRankSearch(st);
-});
+    });
+  }
+}
 
 function _onStatusChange(){
   const st = loadState();
