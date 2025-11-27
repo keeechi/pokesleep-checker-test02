@@ -1866,10 +1866,14 @@ function buildReverseFilterBar() {
     const wrap = document.createElement('div');
     wrap.className = 'filter-item';
     if (extraClass) wrap.classList.add(extraClass);
+
     const lab = document.createElement('label');
     lab.textContent = labelText;
     lab.htmlFor = selectEl.id;
-    selectEl.classList.add('form-select','form-select-sm');
+
+    // ここで小さめ select に
+    selectEl.classList.add('form-select', 'form-select-sm');
+
     wrap.appendChild(lab);
     wrap.appendChild(selectEl);
     return wrap;
@@ -1877,21 +1881,35 @@ function buildReverseFilterBar() {
 
   const bar = document.createElement('div');
   bar.className = 'filter-bar';
-  bar.id = 'rankSearchFilters'; // compact 用
+  bar.id = 'rankSearchFilters'; // .filters-compact 用
 
-  // 1〜2行目（2×2）
+  // --- 1〜2行目（2×2） ---
   bar.appendChild(makeGroup('フィールド', fieldSel));
   bar.appendChild(makeGroup('ランク',     rankSel));
   bar.appendChild(makeGroup('睡眠タイプ', typeSel));
   bar.appendChild(makeGroup('入手状況',   statusSel));
   bar.appendChild(makeGroup('レア度',     raritySel));
 
-  // 3行目（全幅）
+  // --- 3行目（全幅） ソート ---
   bar.appendChild(makeGroup('ソート', sortSel, 'filter-item--sort'));
 
+  // --- フィルターをリセット ボタン ---
+  const resetWrap = document.createElement('div');
+  resetWrap.className = 'filter-item';
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.id = 'rankResetBtn';
+  resetBtn.className = 'btn btn-outline-secondary btn-sm';
+  resetBtn.textContent = 'フィルターをリセット';
+  resetWrap.appendChild(resetBtn);
+  bar.appendChild(resetWrap);
+
+  // 元の .row と入れ替え
   row.replaceWith(bar);
 
-  // リスナー
+  // ------ リスナー設定 ------
+
+  // それぞれのセレクトに既存のハンドラを結びつけ
   typeSel.removeEventListener('change', _onTypeChange);
   typeSel.addEventListener('change', _onTypeChange);
 
@@ -1905,14 +1923,12 @@ function buildReverseFilterBar() {
   raritySel.addEventListener('change', _onRarityChange);
 
   // ★ リセットボタンのリスナー
-  const resetBtn = document.getElementById('rankResetBtn'); // ← 実際のIDに合わせて
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      const st = loadState();
-      resetRankFilters(st);
-      renderRankSearch(st);
-    });
-  }
+  resetBtn.addEventListener('click', () => {
+    const st = loadState();
+    resetRankFilters(st);   // ← 既存の「逆引きフィルター初期化」関数を想定
+    renderRankSearch(st);   // ← 逆引きテーブルを再描画
+    saveState(st);          // ← 状態を保存
+  });
 }
 
 function _onStatusChange(){
