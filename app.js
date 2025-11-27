@@ -1821,7 +1821,7 @@ function buildReverseFilterBar() {
   bar.appendChild(makeGroup('入手状況',   statusSel));
   bar.appendChild(makeGroup('レア度',     raritySel));
 
-  // 3行目（全幅）— ※1回だけ append する！
+  // 3行目（全幅）
   bar.appendChild(makeGroup('ソート', sortSel, 'filter-item--sort'));
 
   row.replaceWith(bar);
@@ -1839,11 +1839,13 @@ function buildReverseFilterBar() {
   raritySel.removeEventListener('change', _onRarityChange);
   raritySel.addEventListener('change', _onRarityChange);
 
-// ★ リセットボタンのリスナー
-  resetBtn.addEventListener('click', () => {
-    const st = loadState();
-    resetRankFilters(st);
-    renderRankSearch(st);
+  // ★ リセットボタンのリスナー
+  const resetBtn = document.getElementById('rankResetBtn'); // ← 実際のIDに合わせて
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const st = loadState();
+      resetRankFilters(st);
+      renderRankSearch(st);
     });
   }
 }
