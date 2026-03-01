@@ -283,37 +283,13 @@ function buildQuickMissingTable(state) {
 
 // --- 常設早見表：モーダル（Bootstrap） ---
 let _qmModalEl = null, _qmModal = null;
-function ensureQuickMissingModal() {
-  if (_qmModalEl) return { el: _qmModalEl, modal: _qmModal };
-  const el = document.createElement('div');
-  el.className = 'modal fade';
-  el.id = 'quickMissingPopup';
-  el.tabIndex = -1;
-  el.innerHTML = `
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header py-2">
-          <h5 class="modal-title">未取得の寝顔の数 〜 早見表</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
-        </div>
-        <div class="modal-body">
-          <div id="quickMissingMiniTable"><!-- JS --></div>
-        </div>
-      </div>
-    </div>`;
-  document.body.appendChild(el);
-  _qmModalEl = el;
-  _qmModal = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
-  return { el: _qmModalEl, modal: _qmModal };
-}
+// (Modal removed in transition to full tab)
 
-function openQuickMissingPopup(state) {
-  const { el, modal } = ensureQuickMissingModal();
-  const wrap = el.querySelector('#quickMissingMiniTable');
+function renderQuickMissingTable(state) {
+  const wrap = document.getElementById('quickMissingMiniTableBody');
+  if (!wrap) return;
   wrap.innerHTML = buildQuickMissingTable(state);
-  styleRankMiniSummary();  // 既存の列配色を流用
-  refreshAllSticky();      // レイアウト再計算
-  modal.show();
+  styleRankMiniSummary();
 }
 
 // (Moved to main() for robustness)
@@ -2514,7 +2490,14 @@ async function main() {
 }
 
 // タブ切替時：まず計測→次に適用
-document.getElementById('mainTabs')?.addEventListener('shown.bs.tab', () => {
+document.getElementById('mainTabs')?.addEventListener('shown.bs.tab', (e) => {
+  const state = loadState();
+  const targetId = e.target.getAttribute('data-bs-target');
+
+  if (targetId === '#pane-quickmissing') {
+    renderQuickMissingTable(state);
+  }
+
   refreshAllSticky();
   applyStickyHeaders();
 });
