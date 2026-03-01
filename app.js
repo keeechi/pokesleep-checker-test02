@@ -24,7 +24,7 @@ const FIELD_SHORT = {
 };
 const SLEEP_TYPES = ['うとうと', 'すやすや', 'ぐっすり'];
 const RARITIES = ['☆1', '☆2', '☆3', '☆4', '☆5']; // 表示用
-const CHECKABLE_STARS = ['☆1','☆2','☆3','☆4'];   // チェック対象
+const CHECKABLE_STARS = ['☆1', '☆2', '☆3', '☆4'];   // チェック対象
 const STYLE_ICON = {
   'うとうと': 'assets/icons/Table_Icons/01-uto-v2.png',
   'すやすや': 'assets/icons/Table_Icons/02-suya-v2.png',
@@ -33,10 +33,10 @@ const STYLE_ICON = {
 const POKEMON_ICONS_JS = './assets/icons/pokemon_icons/pokemon_icons.js';
 
 const FIELD_HEAD_ICON = {
-  'ワカクサ本島':   'assets/icons/Field_Icons/001-wakakusa.png',
-  'シアンの砂浜':   'assets/icons/Field_Icons/002-cyan.png',
-  'トープ洞窟':     'assets/icons/Field_Icons/003-taupe.png',
-  'ウノハナ雪原':   'assets/icons/Field_Icons/004-unohana.png',
+  'ワカクサ本島': 'assets/icons/Field_Icons/001-wakakusa.png',
+  'シアンの砂浜': 'assets/icons/Field_Icons/002-cyan.png',
+  'トープ洞窟': 'assets/icons/Field_Icons/003-taupe.png',
+  'ウノハナ雪原': 'assets/icons/Field_Icons/004-unohana.png',
   'ラピスラズリ湖畔': 'assets/icons/Field_Icons/005-rapis.png',
   'ゴールド旧発電所': 'assets/icons/Field_Icons/006-gold.png',
   'ワカクサ本島EX': 'assets/icons/Field_Icons/007-wakakusaex.png',
@@ -48,7 +48,7 @@ const ICON_SIZE = 45;         // 全寝顔
 const ICON_SIZE_FIELD = 36;   // フィールド別
 
 // 王冠アイコン
-const BADGE_GOLD   = 'assets/icons/Table_Icons/04-GoldBadge.png';
+const BADGE_GOLD = 'assets/icons/Table_Icons/04-GoldBadge.png';
 const BADGE_SILVER = 'assets/icons/Table_Icons/05-SilverBadge.png';
 
 // サマリーから除外（ダークライ）
@@ -74,14 +74,14 @@ function normalizeJP(s) {
   out = out.replace(/[ーｰ‐\-・\s]/g, '');
   return out;
 }
-function escapeHtml(s){ return s?.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) || ''; }
+function escapeHtml(s) { return s?.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])) || ''; }
 
 // ★ ランク表記を省スペース表示にする：段（色）・段内番号
 function splitStage(rankNum) {
-  if (rankNum >= 1 && rankNum <= 5)  return { stage:'ノーマル', color:'#ff0000', idx: rankNum };
-  if (rankNum <= 10)                 return { stage:'スーパー', color:'#0000ff', idx: rankNum - 5 };
-  if (rankNum <= 15)                 return { stage:'ハイパー', color:'#ff8c00', idx: rankNum - 10 };
-  return                                { stage:'マスター', color:'#9400d3', idx: rankNum - 15 }; // 16..35
+  if (rankNum >= 1 && rankNum <= 5) return { stage: 'ノーマル', color: '#ff0000', idx: rankNum };
+  if (rankNum <= 10) return { stage: 'スーパー', color: '#0000ff', idx: rankNum - 5 };
+  if (rankNum <= 15) return { stage: 'ハイパー', color: '#ff8c00', idx: rankNum - 10 };
+  return { stage: 'マスター', color: '#9400d3', idx: rankNum - 15 }; // 16..35
 }
 function renderRankChip(rankNum) {
   if (!rankNum) return 'ー';
@@ -100,8 +100,8 @@ function buildRankMiniSummaryHTML(field, rank, state, sleepTypeFilter = '', stat
   const TYPES = SLEEP_TYPES;
 
   // カウンタ初期化
-  const got = { 'うとうと':0, 'すやすや':0, 'ぐっすり':0 };
-  const not = { 'うとうと':0, 'すやすや':0, 'ぐっすり':0 };
+  const got = { 'うとうと': 0, 'すやすや': 0, 'ぐっすり': 0 };
+  const not = { 'うとうと': 0, 'すやすや': 0, 'ぐっすり': 0 };
 
   for (const row of RAW_ROWS) {
     const rNum = getFieldRankNum(row, field);
@@ -116,28 +116,30 @@ function buildRankMiniSummaryHTML(field, rank, state, sleepTypeFilter = '', stat
     const isChecked = getChecked(state, k, star);
 
     if (isChecked) got[style] = (got[style] || 0) + 1;
-    else           not[style] = (not[style] || 0) + 1;
+    else not[style] = (not[style] || 0) + 1;
   }
 
   // 合計列
-  const gotTotal = TYPES.reduce((s,t)=>s+got[t],0);
-  const notTotal = TYPES.reduce((s,t)=>s+not[t],0);
-  const all = { 'うとうと': got['うとうと']+not['うとうと'],
-                'すやすや': got['すやすや']+not['すやすや'],
-                'ぐっすり': got['ぐっすり']+not['ぐっすり'] };
+  const gotTotal = TYPES.reduce((s, t) => s + got[t], 0);
+  const notTotal = TYPES.reduce((s, t) => s + not[t], 0);
+  const all = {
+    'うとうと': got['うとうと'] + not['うとうと'],
+    'すやすや': got['すやすや'] + not['すやすや'],
+    'ぐっすり': got['ぐっすり'] + not['ぐっすり']
+  };
   const allTotal = gotTotal + notTotal;
 
   // 0件なら空を返す（表示なし）
   if (allTotal === 0) return '';
 
-  const td = (n)=>`<td class="text-center">${n}</td>`;
-  const th = (s)=>`<th class="text-start">${s}</th>`;
+  const td = (n) => `<td class="text-center">${n}</td>`;
+  const th = (s) => `<th class="text-start">${s}</th>`;
 
   const header = `
     <thead class="table-light">
       <tr>
         <th style="width:72px;"></th>
-        ${TYPES.map(t=>`<th class="text-center">${t}</th>`).join('')}
+        ${TYPES.map(t => `<th class="text-center">${t}</th>`).join('')}
         <th class="text-center">合計</th>
       </tr>
     </thead>`;
@@ -158,14 +160,14 @@ function buildRankMiniSummaryHTML(field, rank, state, sleepTypeFilter = '', stat
 }
 
 function styleRankMiniSummary() {
-  const root = document.getElementById('rankMiniSummary') 
-            || document.querySelector('#rankMiniSummary table') 
-            || document.querySelector('[data-mini-summary]'); // 保険
+  const root = document.getElementById('rankMiniSummary')
+    || document.querySelector('#rankMiniSummary table')
+    || document.querySelector('[data-mini-summary]'); // 保険
   if (!root) return;
 
   const table = root.tagName === 'TABLE' ? root : root.querySelector('table') || root;
   const thead = table.querySelector('thead');
-  const rows  = table.querySelectorAll('tr');
+  const rows = table.querySelectorAll('tr');
   if (!thead || !rows.length) return;
 
   const ths = thead.querySelectorAll('th');
@@ -173,10 +175,10 @@ function styleRankMiniSummary() {
 
   ths.forEach((th, idx) => {
     const t = (th.textContent || '').trim();
-    if (t.includes('うとうと'))  { th.classList.add('col-uto');   colClassByIndex[idx] = 'col-uto'; }
-    if (t.includes('すやすや'))  { th.classList.add('col-suya');  colClassByIndex[idx] = 'col-suya'; }
-    if (t.includes('ぐっすり'))  { th.classList.add('col-gusu');  colClassByIndex[idx] = 'col-gusu'; }
-    if (t.includes('合計'))      { th.classList.add('col-total'); colClassByIndex[idx] = 'col-total'; }
+    if (t.includes('うとうと')) { th.classList.add('col-uto'); colClassByIndex[idx] = 'col-uto'; }
+    if (t.includes('すやすや')) { th.classList.add('col-suya'); colClassByIndex[idx] = 'col-suya'; }
+    if (t.includes('ぐっすり')) { th.classList.add('col-gusu'); colClassByIndex[idx] = 'col-gusu'; }
+    if (t.includes('合計')) { th.classList.add('col-total'); colClassByIndex[idx] = 'col-total'; }
   });
 
   rows.forEach(tr => {
@@ -202,7 +204,7 @@ function isEntryComplete(state, ent) {
 }
 
 // --- 早見表（常設版）：未取得数 + 限定未取得(赤) + ☆4未取得(青) を表示 ---
-function buildQuickMissingTable(state){
+function buildQuickMissingTable(state) {
   const AMBER_COL_ABBR = ['島', '浜', '洞', '雪', '湖', '電', '島<br>EX', '渓'];
 
   const thead = `
@@ -224,7 +226,7 @@ function buildQuickMissingTable(state){
       let limitedNotObtained = 0;
       let star4NotObtained = 0;      // ★ 追加：☆4未取得
 
-      for (const row of RAW_ROWS){
+      for (const row of RAW_ROWS) {
         const star = row.DisplayRarity;
         if (!CHECKABLE_STARS.includes(star)) continue;
 
@@ -246,11 +248,11 @@ function buildQuickMissingTable(state){
       }
 
       const bottomRed = (limitedNotObtained > 0 || !AMBER_HIDE_ZERO)
-          ? `<div class="cell-bottom amber-limited-count">(${limitedNotObtained})</div>`
-          : '';
+        ? `<div class="cell-bottom amber-limited-count">(${limitedNotObtained})</div>`
+        : '';
       const bottomBlue = (star4NotObtained > 0 || !AMBER_HIDE_ZERO)
-          ? `<div class="cell-bottom amber-star4-count">(${star4NotObtained})</div>`
-          : '';
+        ? `<div class="cell-bottom amber-star4-count">(${star4NotObtained})</div>`
+        : '';
 
       return `
         <td class="text-center fw-semibold amber-cell">
@@ -281,8 +283,8 @@ function buildQuickMissingTable(state){
 
 // --- 常設早見表：モーダル（Bootstrap） ---
 let _qmModalEl = null, _qmModal = null;
-function ensureQuickMissingModal(){
-  if (_qmModalEl) return { el:_qmModalEl, modal:_qmModal };
+function ensureQuickMissingModal() {
+  if (_qmModalEl) return { el: _qmModalEl, modal: _qmModal };
   const el = document.createElement('div');
   el.className = 'modal fade';
   el.id = 'quickMissingPopup';
@@ -301,11 +303,11 @@ function ensureQuickMissingModal(){
     </div>`;
   document.body.appendChild(el);
   _qmModalEl = el;
-  _qmModal = new bootstrap.Modal(el, { backdrop:true, keyboard:true });
-  return { el:_qmModalEl, modal:_qmModal };
+  _qmModal = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
+  return { el: _qmModalEl, modal: _qmModal };
 }
 
-function openQuickMissingPopup(state){
+function openQuickMissingPopup(state) {
   const { el, modal } = ensureQuickMissingModal();
   const wrap = el.querySelector('#quickMissingMiniTable');
   wrap.innerHTML = buildQuickMissingTable(state);
@@ -355,7 +357,7 @@ function setupPaneSticky(paneId, nodes) {
 // 全タブの offset を再計算
 function refreshAllSticky() {
   measureTabsHeight();
-  ['pane-allfaces','pane-byfield','pane-search'].forEach(id => {
+  ['pane-allfaces', 'pane-byfield', 'pane-search'].forEach(id => {
     const pane = document.getElementById(id);
     if (!pane) return;
     const wrap = pane.querySelector('.pane-sticky-wrap');
@@ -366,7 +368,7 @@ function refreshAllSticky() {
 }
 
 // レンダ後に thead に .is-sticky を付ける
-function makeStickyHeaders(){
+function makeStickyHeaders() {
   // 全寝顔（1枚）
   document.querySelector('#pane-allfaces thead')?.classList.add('is-sticky');
 
@@ -379,7 +381,7 @@ function makeStickyHeaders(){
 }
 
 // === クローン方式: 1) テーブルごとに上部にヘッダーを複製して差し込む ===
-function ensureStickyCloneForTable(table){
+function ensureStickyCloneForTable(table) {
   if (!table || table.dataset.stickyPrepared === '1') return;
 
   const resp = table.closest('.table-responsive') || table.parentElement;
@@ -414,13 +416,13 @@ function ensureStickyCloneForTable(table){
 }
 
 // === クローン方式: 2) 列幅と総幅を元表と一致させる ===
-function updateStickyCloneSizes(table){
+function updateStickyCloneSizes(table) {
   const resp = table.closest('.table-responsive') || table.parentElement;
   const host = resp.querySelector(':scope > .cloned-sticky-head');
   const cloneTable = host ? host.querySelector('table[data-sticky-clone="1"]') : null;
   if (!host || !cloneTable || !table.tHead) return;
 
-  const ths  = table.tHead.querySelectorAll('th,td');
+  const ths = table.tHead.querySelectorAll('th,td');
   let cthead = cloneTable.tHead;
   // 列数が変わっていたら作り直す
   if (!cthead || cthead.querySelectorAll('th,td').length !== ths.length) {
@@ -439,7 +441,7 @@ function updateStickyCloneSizes(table){
     const w = Math.ceil(th.getBoundingClientRect().width);
     const cth = cths[i];
     if (cth) {
-      cth.style.width    = w + 'px';
+      cth.style.width = w + 'px';
       cth.style.minWidth = w + 'px';
       cth.style.maxWidth = w + 'px';
     }
@@ -450,15 +452,15 @@ function updateStickyCloneSizes(table){
 const BADGE_SPRITE_16 = './assets/icons/Table_Icons/limited-badge-16-master.svg';
 const BADGE_SPRITE_20 = './assets/icons/Table_Icons/limited-badge-20-master.svg';
 
-function _isDesktop(){ return window.matchMedia && window.matchMedia('(min-width: 769px)').matches; }
+function _isDesktop() { return window.matchMedia && window.matchMedia('(min-width: 769px)').matches; }
 
 let _badgeSpriteLoaded16 = false;
 let _badgeSpriteLoaded20 = false;
 
-async function ensureBadgeSpriteLoaded(){
+async function ensureBadgeSpriteLoaded() {
   const want20 = _isDesktop();
-  const url    = want20 ? BADGE_SPRITE_20 : BADGE_SPRITE_16;
-  const flag   = want20 ? '_badgeSpriteLoaded20' : '_badgeSpriteLoaded16';
+  const url = want20 ? BADGE_SPRITE_20 : BADGE_SPRITE_16;
+  const flag = want20 ? '_badgeSpriteLoaded20' : '_badgeSpriteLoaded16';
 
   if (want20 && _badgeSpriteLoaded20) return;
   if (!want20 && _badgeSpriteLoaded16) return;
@@ -477,7 +479,7 @@ async function ensureBadgeSpriteLoaded(){
 // ====== 固定ヘッダー（iOS安定版：GPU transform + rAF + DPR丸め） ======
 // === rAF スケジューラ（イベント登録より前に定義しておく） ===
 let _rafScheduled = false;
-function _scheduleUpdate(){
+function _scheduleUpdate() {
   if (_rafScheduled) return;
   _rafScheduled = true;
   requestAnimationFrame(() => {
@@ -490,7 +492,7 @@ const _floatHeads = new Map();      // table -> { host, innerTable, resp, pane, 
 const DPR = Math.max(1, Math.min(4, window.devicePixelRatio || 1));
 const px = n => (Math.round(n * DPR) / DPR) + 'px';
 
-function _getTopOffsetForTable(table){
+function _getTopOffsetForTable(table) {
   let top = 0;
   const tabs = document.getElementById('mainTabs');
   if (tabs) top = Math.max(top, Math.ceil(tabs.getBoundingClientRect().bottom));
@@ -504,9 +506,9 @@ function _getTopOffsetForTable(table){
 
   return top;
 }
-function _isShown(el){ return !!(el && el.offsetParent !== null); }
+function _isShown(el) { return !!(el && el.offsetParent !== null); }
 
-function _ensureFloaterForTable(table){
+function _ensureFloaterForTable(table) {
   if (!table || _floatHeads.has(table)) return;
 
   const resp = table.closest('.table-responsive') || table.parentElement;
@@ -524,24 +526,24 @@ function _ensureFloaterForTable(table){
   if (table.tHead) innerTable.appendChild(table.tHead.cloneNode(true));
   host.appendChild(innerTable);
 
-  resp?.addEventListener('scroll', ()=>_scheduleUpdate(), { passive:true });
+  resp?.addEventListener('scroll', () => _scheduleUpdate(), { passive: true });
 
   let ro = null;
-  if (window.ResizeObserver){
-    ro = new ResizeObserver(()=>_scheduleUpdate());
+  if (window.ResizeObserver) {
+    ro = new ResizeObserver(() => _scheduleUpdate());
     ro.observe(table); if (resp) ro.observe(resp);
   }
   _floatHeads.set(table, { host, innerTable, resp, paneSection, ro });
 }
 
-function _syncColumns(table){
+function _syncColumns(table) {
   const item = _floatHeads.get(table);
   if (!item || !table.tHead) return;
 
   // 列数が変わっていたら thead を作り直す
   const ths = table.tHead.querySelectorAll('th,td');
   let cthead = item.innerTable.tHead;
-  if (!cthead || cthead.querySelectorAll('th,td').length !== ths.length){
+  if (!cthead || cthead.querySelectorAll('th,td').length !== ths.length) {
     item.innerTable.innerHTML = '';
     item.innerTable.appendChild(table.tHead.cloneNode(true));
     cthead = item.innerTable.tHead;
@@ -553,10 +555,10 @@ function _syncColumns(table){
   item.innerTable.style.width = px(rectTable.width);
 
   // 各セル幅をピクセル固定（サブピクセルはDPR丸め）
-  ths.forEach((th, i)=>{
+  ths.forEach((th, i) => {
     const w = th.getBoundingClientRect().width;
     const cth = cths[i];
-    if (cth){
+    if (cth) {
       const val = px(w);
       cth.style.width = val;
       cth.style.minWidth = val;
@@ -565,28 +567,28 @@ function _syncColumns(table){
   });
 }
 
-function _layoutFloater(table){
+function _layoutFloater(table) {
   const item = _floatHeads.get(table);
   if (!item) return;
   const { host, innerTable, resp, paneSection } = item;
 
   // 非表示タブなどは無効
   const shown = el => !!(el && el.offsetParent !== null);
-  if (!shown(table) || (paneSection && !shown(paneSection))){
+  if (!shown(table) || (paneSection && !shown(paneSection))) {
     host.style.display = 'none';
     return;
   }
 
   const rectTable = table.getBoundingClientRect();
-  const rectResp  = (resp || table).getBoundingClientRect();
+  const rectResp = (resp || table).getBoundingClientRect();
   const topOffset = _getTopOffsetForTable(table);
 
   const theadH = Math.ceil((table.tHead?.getBoundingClientRect().height) || 32);
   const shouldShow = rectTable.top < topOffset && (rectTable.bottom - theadH) > topOffset;
-  if (!shouldShow){ host.style.display = 'none'; return; }
+  if (!shouldShow) { host.style.display = 'none'; return; }
 
   host.style.display = 'block';
-  host.style.left  = px(rectResp.left);
+  host.style.left = px(rectResp.left);
   host.style.width = px(rectResp.width);
   host.style.transform = `translate3d(0, ${px(topOffset)}, 0)`;  // ★ iOS安定
 
@@ -594,14 +596,14 @@ function _layoutFloater(table){
   innerTable.style.transform = `translate3d(${-sl}px, 0, 0)`;
 }
 
-function _updateAllFloaters(){
-  _floatHeads.forEach((_, table)=>{
+function _updateAllFloaters() {
+  _floatHeads.forEach((_, table) => {
     _syncColumns(table);
     _layoutFloater(table);
   });
 }
 
-function applyStickyHeaders(){
+function applyStickyHeaders() {
   const tables = [
     document.querySelector('#allFacesTable'),
     // ★ アクティブ/非アクティブに関わらず全フィールドの table を拾う
@@ -619,8 +621,8 @@ function applyStickyHeaders(){
 // 画面イベントは rAF 経由で合成（iOSの慣性スクロールでもブレにくい）
 const _safeSchedule = () => { if (typeof _scheduleUpdate === 'function') _scheduleUpdate(); };
 
-window.addEventListener('scroll',  _safeSchedule, { passive:true });
-window.addEventListener('resize',  _safeSchedule);
+window.addEventListener('scroll', _safeSchedule, { passive: true });
+window.addEventListener('resize', _safeSchedule);
 document.getElementById('mainTabs')?.addEventListener('shown.bs.tab', _safeSchedule);
 
 
@@ -636,9 +638,9 @@ function isExcludedFromSummary(row, scope = 'field') {
 }
 
 // 種(形態)+☆ が 1フィールド限定なら、そのフィールドキーを返す。そうでなければ null
-function getEntStarLimitedField(ent, star){
+function getEntStarLimitedField(ent, star) {
   const fields = [];
-  for (const f of FIELD_KEYS){
+  for (const f of FIELD_KEYS) {
     const has = ent.rows.some(r => r.DisplayRarity === star && getFieldRankNum(r, f));
     if (has) fields.push(f);
     if (fields.length > 1) break;
@@ -647,7 +649,7 @@ function getEntStarLimitedField(ent, star){
 }
 
 // 1行(row)が 1フィールド限定なら、そのフィールドキーを返す。そうでなければ null
-function getRowLimitedField(row){
+function getRowLimitedField(row) {
   const fields = FIELD_KEYS.filter(f => !!getFieldRankNum(row, f));
   return fields.length === 1 ? fields[0] : null;
 }
@@ -664,13 +666,13 @@ const FIELD_BADGE_SUFFIX = {
   'アンバー渓谷': 'amber',
 };
 
-function renderLimitedBadgeByField(fieldKey){
+function renderLimitedBadgeByField(fieldKey) {
   if (!fieldKey) return '';
   const suf = FIELD_BADGE_SUFFIX[fieldKey];
   if (!suf) return '';
 
   const useId = _isDesktop() ? `lb20-${suf}` : `lb16-${suf}`;
-  const size  = _isDesktop() ? 20 : 16;
+  const size = _isDesktop() ? 20 : 16;
 
   return `
     <svg class="limited-badge" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" focusable="false">
@@ -678,8 +680,8 @@ function renderLimitedBadgeByField(fieldKey){
     </svg>`;
 }
 // ===================== 状態保存（★キーは IconNo 優先） =====================
-function rowKey(row){ return String(row.IconNo || row.No); }                 // 行用キー
-function entKey(ent){ return String(ent.iconNo || ent.no); }                 // まとめ用キー（形態ごと）
+function rowKey(row) { return String(row.IconNo || row.No); }                 // 行用キー
+function entKey(ent) { return String(ent.iconNo || ent.no); }                 // まとめ用キー（形態ごと）
 
 // ★ フィルター用のデフォルト値
 function createDefaultFilters() {
@@ -724,8 +726,8 @@ function normalizeState(obj) {
   const def = createDefaultFilters();
 
   base.filters.allfaces = Object.assign({}, def.allfaces, base.filters.allfaces || {});
-  base.filters.byfield  = Object.assign({}, def.byfield,  base.filters.byfield  || {});
-  base.filters.rank     = Object.assign({}, def.rank,     base.filters.rank     || {});
+  base.filters.byfield = Object.assign({}, def.byfield, base.filters.byfield || {});
+  base.filters.rank = Object.assign({}, def.rank, base.filters.rank || {});
 
   return base;
 }
@@ -748,14 +750,14 @@ function saveState(state) {
 // --- 全寝顔一覧 ---
 function applyAllfacesFiltersFromState(state) {
   const f = state.filters?.allfaces || {};
-  const nameEl   = document.getElementById('searchName');
-  const styleEl  = document.getElementById('filterStyle');
-  const sortEl   = document.getElementById('sortBy');
+  const nameEl = document.getElementById('searchName');
+  const styleEl = document.getElementById('filterStyle');
+  const sortEl = document.getElementById('sortBy');
   const statusEl = document.getElementById('allfacesGetStatus');
 
   if (nameEl && typeof f.searchName === 'string') nameEl.value = f.searchName;
-  if (styleEl && typeof f.style === 'string')     styleEl.value = f.style;
-  if (sortEl && typeof f.sortBy === 'string')     sortEl.value = f.sortBy;
+  if (styleEl && typeof f.style === 'string') styleEl.value = f.style;
+  if (sortEl && typeof f.sortBy === 'string') sortEl.value = f.sortBy;
   if (statusEl && typeof f.getStatus === 'string') statusEl.value = f.getStatus;
 }
 
@@ -765,15 +767,15 @@ function updateAllfacesFiltersFromDOM(state) {
   if (!state.filters.allfaces) state.filters.allfaces = Object.assign({}, def.allfaces);
   const f = state.filters.allfaces;
 
-  const nameEl   = document.getElementById('searchName');
-  const styleEl  = document.getElementById('filterStyle');
-  const sortEl   = document.getElementById('sortBy');
+  const nameEl = document.getElementById('searchName');
+  const styleEl = document.getElementById('filterStyle');
+  const sortEl = document.getElementById('sortBy');
   const statusEl = document.getElementById('allfacesGetStatus');
 
   f.searchName = nameEl ? nameEl.value : '';
-  f.style      = styleEl ? styleEl.value : '';
-  f.sortBy     = sortEl ? sortEl.value : 'no-asc';
-  f.getStatus  = statusEl ? statusEl.value : 'すべて';
+  f.style = styleEl ? styleEl.value : '';
+  f.sortBy = sortEl ? sortEl.value : 'no-asc';
+  f.getStatus = statusEl ? statusEl.value : 'すべて';
 
   saveState(state);
 }
@@ -803,14 +805,14 @@ function setActiveFieldTab(fieldKey) {
 // --- フィールド別寝顔一覧 ---
 function applyByfieldFiltersFromState(state) {
   const f = state.filters?.byfield || {};
-  const nameEl   = document.getElementById('byfieldSearchName');
-  const styleEl  = document.getElementById('byfieldFilterStyle');
-  const sortEl   = document.getElementById('byfieldSortBy');
+  const nameEl = document.getElementById('byfieldSearchName');
+  const styleEl = document.getElementById('byfieldFilterStyle');
+  const sortEl = document.getElementById('byfieldSortBy');
   const statusEl = document.getElementById('byfieldGetStatus');
 
   if (nameEl && typeof f.searchName === 'string') nameEl.value = f.searchName;
-  if (styleEl && typeof f.style === 'string')     styleEl.value = f.style;
-  if (sortEl && typeof f.sortBy === 'string')     sortEl.value = f.sortBy;
+  if (styleEl && typeof f.style === 'string') styleEl.value = f.style;
+  if (sortEl && typeof f.sortBy === 'string') sortEl.value = f.sortBy;
   if (statusEl && typeof f.getStatus === 'string') statusEl.value = f.getStatus;
 }
 
@@ -820,15 +822,15 @@ function updateByfieldFiltersFromDOM(state) {
   if (!state.filters.byfield) state.filters.byfield = Object.assign({}, def.byfield);
   const f = state.filters.byfield;
 
-  const nameEl   = document.getElementById('byfieldSearchName');
-  const styleEl  = document.getElementById('byfieldFilterStyle');
-  const sortEl   = document.getElementById('byfieldSortBy');
+  const nameEl = document.getElementById('byfieldSearchName');
+  const styleEl = document.getElementById('byfieldFilterStyle');
+  const sortEl = document.getElementById('byfieldSortBy');
   const statusEl = document.getElementById('byfieldGetStatus');
 
   f.searchName = nameEl ? nameEl.value : '';
-  f.style      = styleEl ? styleEl.value : '';
-  f.sortBy     = sortEl ? sortEl.value : 'no-asc';
-  f.getStatus  = statusEl ? statusEl.value : 'すべて';
+  f.style = styleEl ? styleEl.value : '';
+  f.sortBy = sortEl ? sortEl.value : 'no-asc';
+  f.getStatus = statusEl ? statusEl.value : 'すべて';
 
   saveState(state);
 }
@@ -851,18 +853,18 @@ function resetByfieldFilters(state) {
 // --- フィールド・ランクから検索（逆引き） ---
 function applyRankFiltersFromState(state) {
   const f = state.filters?.rank || {};
-  const fieldEl  = document.getElementById('searchField');
-  const rankEl   = document.getElementById('searchRank');
-  const typeEl   = document.getElementById('searchType');
+  const fieldEl = document.getElementById('searchField');
+  const rankEl = document.getElementById('searchRank');
+  const typeEl = document.getElementById('searchType');
   const statusEl = document.getElementById('searchStatus');
-  const sortEl   = document.getElementById('searchSort');
+  const sortEl = document.getElementById('searchSort');
   const rarityEl = document.getElementById('searchFilterRarity');
 
-  if (fieldEl && f.field)  fieldEl.value  = f.field;
-  if (rankEl && f.rank)    rankEl.value   = String(f.rank);
-  if (typeEl && typeof f.type === 'string')     typeEl.value   = f.type;
+  if (fieldEl && f.field) fieldEl.value = f.field;
+  if (rankEl && f.rank) rankEl.value = String(f.rank);
+  if (typeEl && typeof f.type === 'string') typeEl.value = f.type;
   if (statusEl && typeof f.status === 'string') statusEl.value = f.status;
-  if (sortEl && typeof f.sort === 'string')     sortEl.value   = f.sort;
+  if (sortEl && typeof f.sort === 'string') sortEl.value = f.sort;
   if (rarityEl && typeof f.rarity === 'string') rarityEl.value = f.rarity;
 }
 
@@ -872,19 +874,19 @@ function updateRankFiltersFromDOM(state) {
   if (!state.filters.rank) state.filters.rank = Object.assign({}, def.rank);
   const f = state.filters.rank;
 
-  const fieldEl  = document.getElementById('searchField');
-  const rankEl   = document.getElementById('searchRank');
-  const typeEl   = document.getElementById('searchType');
+  const fieldEl = document.getElementById('searchField');
+  const rankEl = document.getElementById('searchRank');
+  const typeEl = document.getElementById('searchType');
   const statusEl = document.getElementById('searchStatus');
-  const sortEl   = document.getElementById('searchSort');
+  const sortEl = document.getElementById('searchSort');
   const rarityEl = document.getElementById('searchFilterRarity');
 
-  f.field  = fieldEl ? fieldEl.value : f.field;
-  const r  = rankEl ? parseInt(rankEl.value || '1', 10) : f.rank;
-  f.rank   = Number.isFinite(r) ? r : f.rank;
-  f.type   = typeEl   ? typeEl.value   : f.type;
+  f.field = fieldEl ? fieldEl.value : f.field;
+  const r = rankEl ? parseInt(rankEl.value || '1', 10) : f.rank;
+  f.rank = Number.isFinite(r) ? r : f.rank;
+  f.type = typeEl ? typeEl.value : f.type;
   f.status = statusEl ? statusEl.value : f.status;
-  f.sort   = sortEl   ? sortEl.value   : f.sort;
+  f.sort = sortEl ? sortEl.value : f.sort;
   f.rarity = rarityEl ? rarityEl.value : f.rarity;
 
   saveState(state);
@@ -971,31 +973,31 @@ function getFieldRankNum(row, fieldKey) {
   const m = String(raw).trim().match(/(ノーマル|スーパー|ハイパー|マスター)\s*([0-9１-９]+)$/);
   if (!m) return null;
   const stage = m[1];
-  const idx = parseInt(m[2].replace(/[^\d]/g,''), 10);
-  if (stage === 'ノーマル') return (idx>=1&&idx<=5) ? idx : null;
-  if (stage === 'スーパー') return (idx>=1&&idx<=5) ? 5+idx : null;
-  if (stage === 'ハイパー') return (idx>=1&&idx<=5) ? 10+idx : null;
-  if (stage === 'マスター') return (idx>=1&&idx<=20)? 15+idx : null;
+  const idx = parseInt(m[2].replace(/[^\d]/g, ''), 10);
+  if (stage === 'ノーマル') return (idx >= 1 && idx <= 5) ? idx : null;
+  if (stage === 'スーパー') return (idx >= 1 && idx <= 5) ? 5 + idx : null;
+  if (stage === 'ハイパー') return (idx >= 1 && idx <= 5) ? 10 + idx : null;
+  if (stage === 'マスター') return (idx >= 1 && idx <= 20) ? 15 + idx : null;
   return null;
 }
 function speciesHasStar(entry, star) { return entry.rows.some(r => r.DisplayRarity === star); }
 
 // 1つの行（=寝顔1件）について、出現フィールド数を数える
-function countAppearingFieldsForRow(row){
+function countAppearingFieldsForRow(row) {
   let c = 0;
-  for (const f of FIELD_KEYS){
+  for (const f of FIELD_KEYS) {
     if (getFieldRankNum(row, f)) c++;
   }
   return c;
 }
-function isRowLimited(row){ return countAppearingFieldsForRow(row) === 1; }
+function isRowLimited(row) { return countAppearingFieldsForRow(row) === 1; }
 
 // 種（形態）＋☆ごとに、全フィールド横断で出現フィールド数を数える
-function isEntStarLimited(ent, star){
+function isEntStarLimited(ent, star) {
   const fields = new Set();
-  for (const r of ent.rows){
+  for (const r of ent.rows) {
     if (r.DisplayRarity !== star) continue;
-    for (const f of FIELD_KEYS){
+    for (const f of FIELD_KEYS) {
       if (getFieldRankNum(r, f)) fields.add(f);
     }
   }
@@ -1065,7 +1067,7 @@ function renderPokemonIconById(iconId, sizePx = ICON_SIZE) {
 // 限定バッジ画像
 const LIMITED_BADGE_16 = './assets/icons/Table_Icons/limited-badge-16.svg';
 const LIMITED_BADGE_20 = './assets/icons/Table_Icons/limited-badge-20.svg';
-function getLimitedBadgeSrc(){
+function getLimitedBadgeSrc() {
   // スマホ/PCで画像サイズを切替（ブレークポイントは他と合わせて 769px）
   return (window.matchMedia && window.matchMedia('(min-width: 769px)').matches)
     ? LIMITED_BADGE_20
@@ -1074,9 +1076,9 @@ function getLimitedBadgeSrc(){
 
 // ===================== サマリー =====================
 function renderSummary(state) {
-  const fmtCell = ({num, denom, rate}, strong = false) => {
+  const fmtCell = ({ num, denom, rate }, strong = false) => {
     let badgeSrc = null;
-    if (rate >= 95)      badgeSrc = BADGE_GOLD;
+    if (rate >= 95) badgeSrc = BADGE_GOLD;
     else if (rate >= 80) badgeSrc = BADGE_SILVER;
     const topRowHtml = badgeSrc
       ? `<span class="sum-top-row"><span class="sum-num">${num}</span><img class="sum-badge" src="${badgeSrc}" alt="" loading="lazy" decoding="async"></span>`
@@ -1093,35 +1095,35 @@ function renderSummary(state) {
   const root = document.getElementById('summaryGrid');
 
   // フィールド別
-const calcFor = (style, field) => {
-  let denom = 0, num = 0;
-  for (const row of RAW_ROWS) {
-    if (isExcludedFromSummary(row, 'field')) continue; // ★ 追加
-    if (style && row.Style !== style) continue;
-    const rankNum = getFieldRankNum(row, field);
-    if (rankNum) {
+  const calcFor = (style, field) => {
+    let denom = 0, num = 0;
+    for (const row of RAW_ROWS) {
+      if (isExcludedFromSummary(row, 'field')) continue; // ★ 追加
+      if (style && row.Style !== style) continue;
+      const rankNum = getFieldRankNum(row, field);
+      if (rankNum) {
+        denom++;
+        if (CHECKABLE_STARS.includes(row.DisplayRarity) &&
+          getChecked(state, rowKey(row), row.DisplayRarity)) num++;
+      }
+    }
+    const rate = denom ? Math.floor((num / denom) * 100) : 0;
+    return { num, denom, rate };
+  };
+
+  // 全体
+  const calcForAll = (style) => {
+    let denom = 0, num = 0;
+    for (const row of RAW_ROWS) {
+      if (isExcludedFromSummary(row, 'all')) continue;   // ★ 追加：全体はダークライ含める
+      if (style && row.Style !== style) continue;
       denom++;
       if (CHECKABLE_STARS.includes(row.DisplayRarity) &&
-          getChecked(state, rowKey(row), row.DisplayRarity)) num++;
-    }
-  }
-  const rate = denom ? Math.floor((num / denom) * 100) : 0;
-  return { num, denom, rate };
-};
-
-// 全体
-const calcForAll = (style) => {
-  let denom = 0, num = 0;
-  for (const row of RAW_ROWS) {
-    if (isExcludedFromSummary(row, 'all')) continue;   // ★ 追加：全体はダークライ含める
-    if (style && row.Style !== style) continue;
-    denom++;
-    if (CHECKABLE_STARS.includes(row.DisplayRarity) &&
         getChecked(state, rowKey(row), row.DisplayRarity)) num++;
-  }
-  const rate = denom ? Math.floor((num / denom) * 100) : 0;
-  return { num, denom, rate };
-};
+    }
+    const rate = denom ? Math.floor((num / denom) * 100) : 0;
+    return { num, denom, rate };
+  };
 
   const header = `
     <table class="table table-sm align-middle mb-0 summary-table">
@@ -1130,48 +1132,48 @@ const calcForAll = (style) => {
           <th class="summary-lefthead-col"></th>
 <th class="text-center" style="width:80px;">全体</th>
 ${FIELD_KEYS.map(f => {
-  const src = FIELD_HEAD_ICON[f];              // 画像パス取得
-  const alt = FIELD_SHORT[f] || f;             // 代替テキスト
-  return `
+    const src = FIELD_HEAD_ICON[f];              // 画像パス取得
+    const alt = FIELD_SHORT[f] || f;             // 代替テキスト
+    return `
     <th class="text-center" style="width:80px;">
       <img src="${src}" alt="${alt}" class="field-head-icon" loading="lazy" decoding="async">
     </th>`;
-}).join('')}
+  }).join('')}
         </tr>
       </thead>
       <tbody>
         ${SLEEP_TYPES.map(style => {
-          const totalCell = (() => {
-            const d = calcForAll(style);
-            return `<td class="text-center">${fmtCell(d)}</td>`;
-          })();
-          const fieldCells = FIELD_KEYS.map(field => {
-            const d = calcFor(style, field);
-            return `<td class="text-center">${fmtCell(d)}</td>`;
-          }).join('');
-          return `<tr>
+    const totalCell = (() => {
+      const d = calcForAll(style);
+      return `<td class="text-center">${fmtCell(d)}</td>`;
+    })();
+    const fieldCells = FIELD_KEYS.map(field => {
+      const d = calcFor(style, field);
+      return `<td class="text-center">${fmtCell(d)}</td>`;
+    }).join('');
+    return `<tr>
             <th class="summary-lefthead text-center align-middle">
               <img src="${STYLE_ICON[style]}" alt="${style}" class="summary-icon" loading="lazy">
             </th>
             ${totalCell}
             ${fieldCells}
           </tr>`;
-        }).join('')}
+  }).join('')}
         ${(() => {
-          const allTotal = (() => {
-            const d = calcForAll(null);
-            return `<td class="text-center">${fmtCell(d, true)}</td>`;
-          })();
-          const tds = FIELD_KEYS.map(field => {
-            const d = calcFor(null, field);
-            return `<td class="text-center">${fmtCell(d, true)}</td>`;
-          }).join('');
-          return `<tr class="table-light">
+      const allTotal = (() => {
+        const d = calcForAll(null);
+        return `<td class="text-center">${fmtCell(d, true)}</td>`;
+      })();
+      const tds = FIELD_KEYS.map(field => {
+        const d = calcFor(null, field);
+        return `<td class="text-center">${fmtCell(d, true)}</td>`;
+      }).join('');
+      return `<tr class="table-light">
             <th class="text-center fw-semibold">合計</th>
             ${allTotal}
             ${tds}
           </tr>`;
-        })()}
+    })()}
       </tbody>
     </table>`;
   root.innerHTML = header;
@@ -1181,7 +1183,7 @@ ${FIELD_KEYS.map(f => {
 // 1) モーダルを1度だけ作る
 let _fieldRankModalEl = null, _fieldRankModal = null;
 function ensureFieldRankModal() {
-  if (_fieldRankModalEl) return { modal:_fieldRankModal, el:_fieldRankModalEl };
+  if (_fieldRankModalEl) return { modal: _fieldRankModal, el: _fieldRankModalEl };
 
   const el = document.createElement('div');
   el.id = 'fieldRankModalRoot';
@@ -1201,8 +1203,8 @@ function ensureFieldRankModal() {
     </div>`;
   document.body.appendChild(el);
   _fieldRankModalEl = el;
-  _fieldRankModal = new bootstrap.Modal(el, { backdrop:true, keyboard:true });
-  return { modal:_fieldRankModal, el:_fieldRankModalEl };
+  _fieldRankModal = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
+  return { modal: _fieldRankModal, el: _fieldRankModalEl };
 }
 
 // 2) エントリ（species）→ フィールド×☆1..☆4 の最小必要ランク表HTML
@@ -1211,7 +1213,7 @@ function buildFieldRankMatrixHTML(ent) {
     <thead class="table-light">
       <tr>
         <th class="text-start">フィールド</th>
-        ${CHECKABLE_STARS.map(s=>`<th class="text-center">${s}</th>`).join('')}
+        ${CHECKABLE_STARS.map(s => `<th class="text-center">${s}</th>`).join('')}
       </tr>
     </thead>`;
 
@@ -1219,7 +1221,7 @@ function buildFieldRankMatrixHTML(ent) {
   for (const f of FIELD_KEYS) {
     // そのフィールドに1つでも出現があるか判定
     let appears = false;
-    const cells = CHECKABLE_STARS.map(star=>{
+    const cells = CHECKABLE_STARS.map(star => {
       let min = Infinity;
       for (const r of ent.rows) {
         if (r.DisplayRarity !== star) continue;
@@ -1251,10 +1253,10 @@ function findEntryByEntKey(key) {
 function openFieldRankModal(ent) {
   const { modal, el } = ensureFieldRankModal();
   const title = el.querySelector('.modal-title');
-    title.textContent = `${ent.no} ${ent.name} の出現フィールド・ランク`;
-    title.style.fontSize = '12pt';
-    el.querySelector('.modal-body').innerHTML = buildFieldRankMatrixHTML(ent);
-    modal.show();
+  title.textContent = `${ent.no} ${ent.name} の出現フィールド・ランク`;
+  title.style.fontSize = '12pt';
+  el.querySelector('.modal-body').innerHTML = buildFieldRankMatrixHTML(ent);
+  modal.show();
 }
 
 let LAST_RENDER_ENTRIES = [];
@@ -1278,34 +1280,34 @@ function renderAllFaces(state) {
     entries = entries.filter(ent => {
       const completed = isEntryComplete(state, ent);
       if (filterGetStatus === 'コンプリート済') return completed;
-      if (filterGetStatus === '未取得あり')   return !completed;
+      if (filterGetStatus === '未取得あり') return !completed;
       return true;
     });
   }
 
-  entries.sort((a,b)=>{
-    if (sortBy === 'name-asc')  return a.name.localeCompare(b.name, 'ja');
+  entries.sort((a, b) => {
+    if (sortBy === 'name-asc') return a.name.localeCompare(b.name, 'ja');
     if (sortBy === 'name-desc') return b.name.localeCompare(a.name, 'ja');
-    if (sortBy === 'no-desc')   return b.no.localeCompare(a.no, 'ja');
+    if (sortBy === 'no-desc') return b.no.localeCompare(a.no, 'ja');
     return a.no.localeCompare(b.no, 'ja');
   });
 
   LAST_RENDER_ENTRIES = entries;
 
-tbody.innerHTML = entries.map(ent => {
-  const key = entKey(ent);
-  const no = ent.no, name = ent.name;
+  tbody.innerHTML = entries.map(ent => {
+    const key = entKey(ent);
+    const no = ent.no, name = ent.name;
 
-  // ☆1〜☆4 の各セルだけを作る
-const cells = CHECKABLE_STARS.map(star => {
-  const exists = speciesHasStar(ent, star);
-  if (!exists) return `<td class="text-center cell-absent">—</td>`;
+    // ☆1〜☆4 の各セルだけを作る
+    const cells = CHECKABLE_STARS.map(star => {
+      const exists = speciesHasStar(ent, star);
+      if (!exists) return `<td class="text-center cell-absent">—</td>`;
 
-  const checked = getChecked(state, key, star);
-  const limitedField = getEntStarLimitedField(ent, star);
-  const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
+      const checked = getChecked(state, key, star);
+      const limitedField = getEntStarLimitedField(ent, star);
+      const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
 
-  return `
+      return `
       <td class="text-center check-cell ${checked ? 'cell-checked' : ''} ${badge ? 'badge-host' : ''}">
         <div class="check-inner">
           <input type="checkbox" class="form-check-input"
@@ -1314,17 +1316,17 @@ const cells = CHECKABLE_STARS.map(star => {
         </div>
         ${badge}
       </td>`;
-}).join('');
+    }).join('');
 
-  // 行まとめボタン
-  const bulkBtn = `
+    // 行まとめボタン
+    const bulkBtn = `
     <div class="btn-group-vertical btn-group-sm bulk-group-vert" role="group" aria-label="行まとめ">
       <button type="button" class="btn btn-outline-primary" data-bulk="on"  data-key="${key}">一括ON</button>
       <button type="button" class="btn btn-outline-secondary" data-bulk="off" data-key="${key}">一括OFF</button>
     </div>`;
 
-  // 行全体を返す（★ ここは map の外）
-  return `
+    // 行全体を返す（★ ここは map の外）
+    return `
     <tr>
       <td class="name-cell text-center align-middle">
         <div style="width:${ICON_SIZE + 16}px; margin: 0 auto;">
@@ -1342,13 +1344,13 @@ const cells = CHECKABLE_STARS.map(star => {
       ${cells}
       <td class="text-center td-bulk">${bulkBtn}</td>
     </tr>`;
-}).join('');
+  }).join('');
 
 
   // チェック（★ data-key を使う）
   tbody.querySelectorAll('input[type="checkbox"]').forEach(chk => {
-    chk.addEventListener('change', (e)=>{
-      const key  = e.target.dataset.key;
+    chk.addEventListener('change', (e) => {
+      const key = e.target.dataset.key;
       const star = e.target.dataset.star;
       setChecked(state, key, star, e.target.checked);
       e.target.closest('td').classList.toggle('cell-checked', e.target.checked);
@@ -1364,12 +1366,12 @@ const cells = CHECKABLE_STARS.map(star => {
   });
 
   // 行まとめ（★ data-key を使う）
-  tbody.querySelectorAll('button[data-bulk]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const key  = e.currentTarget.dataset.key;
+  tbody.querySelectorAll('button[data-bulk]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const key = e.currentTarget.dataset.key;
       const mode = e.currentTarget.dataset.bulk; // on/off
       setRowAll(state, key, mode === 'on');
-      CHECKABLE_STARS.forEach(star=>{
+      CHECKABLE_STARS.forEach(star => {
         const input = tbody.querySelector(`input[data-key="${key}"][data-star="${star}"]`);
         if (input) {
           input.checked = (mode === 'on');
@@ -1381,28 +1383,28 @@ const cells = CHECKABLE_STARS.map(star => {
       updateAmberPopup(state);
     });
   });
-    // ▼ボタン：出現フィールド・ランクのミニ表（モーダル）
-    tbody.querySelectorAll('button.icon-more').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        const k = e.currentTarget.dataset.entkey;
-        const ent = findEntryByEntKey(k);
-        if (ent) openFieldRankModal(ent);
-      });
+  // ▼ボタン：出現フィールド・ランクのミニ表（モーダル）
+  tbody.querySelectorAll('button.icon-more').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const k = e.currentTarget.dataset.entkey;
+      const ent = findEntryByEntKey(k);
+      if (ent) openFieldRankModal(ent);
     });
+  });
   applyStickyHeaders();
   refreshAllSticky();
 }
 
 // ===================== フィールド別 =====================
-function firstStyleKey(ent){
+function firstStyleKey(ent) {
   const arr = Array.from(ent.styles);
-  const order = {'うとうと':1,'すやすや':2,'ぐっすり':3};
-  arr.sort((a,b)=>(order[a]||9)-(order[b]||9));
+  const order = { 'うとうと': 1, 'すやすや': 2, 'ぐっすり': 3 };
+  arr.sort((a, b) => (order[a] || 9) - (order[b] || 9));
   return arr[0] || '';
 }
 
 function setupFieldTabs() {
-  const tabsUl  = document.getElementById('fieldTabs');
+  const tabsUl = document.getElementById('fieldTabs');
   const content = document.getElementById('fieldTabsContent');
   if (!tabsUl || !content) return;
 
@@ -1449,7 +1451,7 @@ function setupFieldTabs() {
 
   // ★ タブ切り替え時に state.filters.byfield.field を更新
   tabsUl.addEventListener('shown.bs.tab', (e) => {
-    const btn    = e.target;                               // アクティブになったタブボタン
+    const btn = e.target;                               // アクティブになったタブボタン
     const target = btn.getAttribute('data-bs-target') || '';
     const m = target.match(/pane-field-(\d+)/);
     if (!m) return;
@@ -1458,7 +1460,7 @@ function setupFieldTabs() {
     const fieldKey = FIELD_KEYS[idx];
     if (!fieldKey) return;
 
-    const st  = loadState();
+    const st = loadState();
     const def = createDefaultFilters();
     if (!st.filters) st.filters = {};
     if (!st.filters.byfield) st.filters.byfield = Object.assign({}, def.byfield);
@@ -1512,24 +1514,24 @@ function renderFieldTables(state) {
   if (normQuery) baseEntries = baseEntries.filter(ent => normalizeJP(ent.name).includes(normQuery));
   if (filterStyle) baseEntries = baseEntries.filter(ent => ent.rows.some(r => r.Style === filterStyle));
 
-  baseEntries.sort((a,b)=>{
-  if (sortBy === 'name-asc')  return a.name.localeCompare(b.name, 'ja');
-  if (sortBy === 'name-desc') return b.name.localeCompare(a.name, 'ja');
-  if (sortBy === 'no-desc')   return b.no.localeCompare(a.no, 'ja');
-  return a.no.localeCompare(b.no, 'ja');
-});
-
-// ★ 取得状況フィルターは sort の後に適用
-if (getStatus !== 'すべて') {
-  baseEntries = baseEntries.filter(ent => {
-    const completed = isEntryComplete(state, ent);
-    if (getStatus === 'コンプリート済') return completed;
-    if (getStatus === '未取得あり')     return !completed;
-    return true;
+  baseEntries.sort((a, b) => {
+    if (sortBy === 'name-asc') return a.name.localeCompare(b.name, 'ja');
+    if (sortBy === 'name-desc') return b.name.localeCompare(a.name, 'ja');
+    if (sortBy === 'no-desc') return b.no.localeCompare(a.no, 'ja');
+    return a.no.localeCompare(b.no, 'ja');
   });
-}
 
-  FIELD_KEYS.forEach(field=>{
+  // ★ 取得状況フィルターは sort の後に適用
+  if (getStatus !== 'すべて') {
+    baseEntries = baseEntries.filter(ent => {
+      const completed = isEntryComplete(state, ent);
+      if (getStatus === 'コンプリート済') return completed;
+      if (getStatus === '未取得あり') return !completed;
+      return true;
+    });
+  }
+
+  FIELD_KEYS.forEach(field => {
     const tbody = document.querySelector(`#fieldTabsContent tbody[data-field="${field}"]`);
     const rows = [];
     for (const ent of baseEntries) {
@@ -1538,26 +1540,26 @@ if (getStatus !== 'すべて') {
 
       const key = entKey(ent); // ★ 形態ごとのキー
 
-const cells = CHECKABLE_STARS.map(star=>{
-  const hasRow = ent.rows.find(r => r.DisplayRarity === star);
-  if (!hasRow) return `<td class="text-center cell-absent">—</td>`;
-  const rankNum = getFieldRankNum(hasRow, field);
-  if (!rankNum) return `<td class="text-center cell-disabled">ー</td>`;
+      const cells = CHECKABLE_STARS.map(star => {
+        const hasRow = ent.rows.find(r => r.DisplayRarity === star);
+        if (!hasRow) return `<td class="text-center cell-absent">—</td>`;
+        const rankNum = getFieldRankNum(hasRow, field);
+        if (!rankNum) return `<td class="text-center cell-disabled">ー</td>`;
 
-  const checked = getChecked(state, key, star);
-  const limitedField = getEntStarLimitedField(ent, star);
-  const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
+        const checked = getChecked(state, key, star);
+        const limitedField = getEntStarLimitedField(ent, star);
+        const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
 
-  return `
+        return `
     <td class="text-center toggle-cell ${checked ? 'cell-checked' : ''} ${badge ? 'badge-host' : ''}"
         data-key="${key}" data-star="${star}">
       ${renderRankChip(rankNum)}
       ${badge}
     </td>`;
-}).join('');
+      }).join('');
 
-// ★ 行はここで push（map の外）
-rows.push(`
+      // ★ 行はここで push（map の外）
+      rows.push(`
   <tr>
     <td class="byfield-name-cell text-center align-middle">
       <div class="pf-wrap">
@@ -1575,38 +1577,38 @@ rows.push(`
     <td class="type-cell text-center">${firstStyleKey(ent) || '-'}</td>
     ${cells}
   </tr>`);
-  }
-    
-  tbody.innerHTML = rows.join('');
+    }
+
+    tbody.innerHTML = rows.join('');
 
     // ★ セル全体クリックで ON/OFF（data-key を使用）
-tbody.querySelectorAll('td.toggle-cell').forEach(td=>{
-  td.addEventListener('click', ()=>{
-    const key  = td.dataset.key;
-    const star = td.dataset.star;
-    const now  = getChecked(state, key, star);
-    setChecked(state, key, star, !now);
-    td.classList.toggle('cell-checked', !now);
-    syncOtherViews(key, star, !now);
-    renderSummary(state);
-    renderRankSearch(state);
-    updateAmberPopup(state);
+    tbody.querySelectorAll('td.toggle-cell').forEach(td => {
+      td.addEventListener('click', () => {
+        const key = td.dataset.key;
+        const star = td.dataset.star;
+        const now = getChecked(state, key, star);
+        setChecked(state, key, star, !now);
+        td.classList.toggle('cell-checked', !now);
+        syncOtherViews(key, star, !now);
+        renderSummary(state);
+        renderRankSearch(state);
+        updateAmberPopup(state);
 
-    if ((document.getElementById('byfieldGetStatus')?.value || 'すべて') !== 'すべて') {
-      renderFieldTables(loadState());
-    }
-  });
-});
+        if ((document.getElementById('byfieldGetStatus')?.value || 'すべて') !== 'すべて') {
+          renderFieldTables(loadState());
+        }
+      });
+    });
     // ▼ボタン（フィールド別）— モーダルを開く
-    tbody.querySelectorAll('button.icon-more').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
+    tbody.querySelectorAll('button.icon-more').forEach(btn => {
+      btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const k = e.currentTarget.dataset.entkey;
         const ent = findEntryByEntKey(k);
         if (ent) openFieldRankModal(ent);
       });
     });
-    
+
   });
   applyStickyHeaders();
   refreshAllSticky();
@@ -1616,13 +1618,13 @@ function ensureRankMiniSummaryContainer() {
   let el = document.getElementById('rankMiniSummary');
   if (el) return el;
 
-    el = document.createElement('div');
-    el.id = 'rankMiniSummary';
-    el.className = 'rank-mini-summary mt-2';
-    const table = document.getElementById('rankSearchTable');
-    if (!table || !table.parentNode) return null;
-    table.parentNode.insertBefore(el, table);
-    return el;
+  el = document.createElement('div');
+  el.id = 'rankMiniSummary';
+  el.className = 'rank-mini-summary mt-2';
+  const table = document.getElementById('rankSearchTable');
+  if (!table || !table.parentNode) return null;
+  table.parentNode.insertBefore(el, table);
+  return el;
 }
 
 // 睡眠タイプセレクト要素を生成（DOMには挿入しない）
@@ -1634,10 +1636,10 @@ function createSleepTypeSelect() {
   sel.id = 'searchType';
   sel.className = 'form-select form-select-sm';
   sel.innerHTML = [
-    {v:'',        t:'全て'},
-    {v:'うとうと', t:'うとうと'},
-    {v:'すやすや', t:'すやすや'},
-    {v:'ぐっすり', t:'ぐっすり'},
+    { v: '', t: '全て' },
+    { v: 'うとうと', t: 'うとうと' },
+    { v: 'すやすや', t: 'すやすや' },
+    { v: 'ぐっすり', t: 'ぐっすり' },
   ].map(o => `<option value="${o.v}">${o.t}</option>`).join('');
   sel.value = '';
   return sel;
@@ -1651,9 +1653,9 @@ function createStatusSelect() {
   sel.id = 'searchStatus';
   sel.className = 'form-select form-select-sm';
   sel.innerHTML = [
-    { v:'すべて', t:'すべて' },
-    { v:'未入手', t:'未入手' },
-    { v:'入手済', t:'入手済' },
+    { v: 'すべて', t: 'すべて' },
+    { v: '未入手', t: '未入手' },
+    { v: '入手済', t: '入手済' },
   ].map(o => `<option value="${o.v}">${o.t}</option>`).join('');
   sel.value = 'すべて';
   return sel;
@@ -1667,12 +1669,12 @@ function createSortSelect() {
   sel.id = 'searchSort';
   sel.className = 'form-select form-select-sm';
   sel.innerHTML = [
-    { v:'no-asc',     t:'No昇順' },
-    { v:'no-desc',    t:'No降順' },
-    { v:'name-asc',   t:'名前昇順' },
-    { v:'name-desc',  t:'名前降順' },
-    { v:'rank-asc',   t:'出現ランク昇順' },
-    { v:'rank-desc',  t:'出現ランク降順' },
+    { v: 'no-asc', t: 'No昇順' },
+    { v: 'no-desc', t: 'No降順' },
+    { v: 'name-asc', t: '名前昇順' },
+    { v: 'name-desc', t: '名前降順' },
+    { v: 'rank-asc', t: '出現ランク昇順' },
+    { v: 'rank-desc', t: '出現ランク降順' },
   ].map(o => `<option value="${o.v}">${o.t}</option>`).join('');
   sel.value = 'no-asc';
   return sel;
@@ -1681,15 +1683,15 @@ function createSortSelect() {
 // 逆引きフィルターのDOMを「フィールド／ランク／睡眠タイプ」で再構成（行全体を置き換え）
 function buildReverseFilterBar() {
   const fieldSel = document.getElementById('searchField');
-  const rankSel  = document.getElementById('searchRank');
+  const rankSel = document.getElementById('searchRank');
   if (!fieldSel || !rankSel) return;
 
   const row = fieldSel.closest('.row') || rankSel.closest('.row');
   if (!row) return;
 
-  const typeSel   = createSleepTypeSelect();
+  const typeSel = createSleepTypeSelect();
   const statusSel = createStatusSelect();
-  const sortSel   = createSortSelect();
+  const sortSel = createSortSelect();
   const raritySel = createRarityFilterSelect();
 
   const makeGroup = (labelText, selectEl, extraClass = '') => {
@@ -1715,10 +1717,10 @@ function buildReverseFilterBar() {
 
   // --- 1〜2行目（2×2） ---
   bar.appendChild(makeGroup('フィールド', fieldSel));
-  bar.appendChild(makeGroup('ランク',     rankSel));
+  bar.appendChild(makeGroup('ランク', rankSel));
   bar.appendChild(makeGroup('睡眠タイプ', typeSel));
-  bar.appendChild(makeGroup('入手状況',   statusSel));
-  bar.appendChild(makeGroup('レア度',     raritySel));
+  bar.appendChild(makeGroup('入手状況', statusSel));
+  bar.appendChild(makeGroup('レア度', raritySel));
 
   // --- 3行目（全幅） ソート ---
   bar.appendChild(makeGroup('ソート', sortSel, 'filter-item--sort'));
@@ -1761,17 +1763,17 @@ function buildReverseFilterBar() {
   });
 }
 
-function _onStatusChange(){
+function _onStatusChange() {
   const st = loadState();
   updateRankFiltersFromDOM(st);
   renderRankSearch(st);
 }
-function _onSortChange(){
+function _onSortChange() {
   const st = loadState();
   updateRankFiltersFromDOM(st);
   renderRankSearch(st);
 }
-function _onRarityChange(){
+function _onRarityChange() {
   const st = loadState();
   updateRankFiltersFromDOM(st);
   renderRankSearch(st);
@@ -1787,46 +1789,46 @@ function _onTypeChange() {
 
 // ===================== レア度フィルター =====================
 function createRarityFilterSelect() {
-    let sel = document.getElementById('searchFilterRarity');
-    if (sel) return sel;
-  
-    sel = document.createElement('select');
-    sel.id = 'searchFilterRarity';
-    sel.className = 'form-select form-select-sm';
-    sel.innerHTML = '<option value="">すべて</option>\
+  let sel = document.getElementById('searchFilterRarity');
+  if (sel) return sel;
+
+  sel = document.createElement('select');
+  sel.id = 'searchFilterRarity';
+  sel.className = 'form-select form-select-sm';
+  sel.innerHTML = '<option value="">すべて</option>\
                       <option value="☆1">☆1</option>\
                       <option value="☆2">☆2</option>\
                       <option value="☆3">☆3</option>\
                       <option value="☆4">☆4</option>';
-    sel.value = '';
-    return sel;
+  sel.value = '';
+  return sel;
 }
 
 // ===================== ランク検索（未入手のみ） =====================
 function setupRankSearchControls() {
-// フィールド
-const sel = document.getElementById('searchField');
-sel.innerHTML = FIELD_KEYS.map(f=>`<option value="${f}">${FIELD_SHORT[f]}</option>`).join('');
-sel.addEventListener('change', () => {
-  const st = loadState();
-  updateRankFiltersFromDOM(st);
-  renderRankSearch(st);
-});
+  // フィールド
+  const sel = document.getElementById('searchField');
+  sel.innerHTML = FIELD_KEYS.map(f => `<option value="${f}">${FIELD_SHORT[f]}</option>`).join('');
+  sel.addEventListener('change', () => {
+    const st = loadState();
+    updateRankFiltersFromDOM(st);
+    renderRankSearch(st);
+  });
 
-// ランク
-const rankSel = document.getElementById('searchRank');
-const opts = [];
-for (let n = 1; n <= 35; n++) opts.push(`<option value="${n}">${labelForRank(n)}</option>`);
-rankSel.innerHTML = opts.join('');
-rankSel.value = '1';
-rankSel.addEventListener('change', () => {
-  const st = loadState();
-  updateRankFiltersFromDOM(st);
-  renderRankSearch(st);
-});
+  // ランク
+  const rankSel = document.getElementById('searchRank');
+  const opts = [];
+  for (let n = 1; n <= 35; n++) opts.push(`<option value="${n}">${labelForRank(n)}</option>`);
+  rankSel.innerHTML = opts.join('');
+  rankSel.value = '1';
+  rankSel.addEventListener('change', () => {
+    const st = loadState();
+    updateRankFiltersFromDOM(st);
+    renderRankSearch(st);
+  });
 
-// 3ブロック（フィールド/ランク/睡眠タイプ）に再構成
-buildReverseFilterBar();
+  // 3ブロック（フィールド/ランク/睡眠タイプ）に再構成
+  buildReverseFilterBar();
 }
 
 // 「入手済？」ヘッダーを足す（重複追加しない）
@@ -1844,10 +1846,10 @@ function ensureRankSearchHeaderHasObtainedColumn() {
 
 function renderRankSearch(state) {
   const field = document.getElementById('searchField').value || FIELD_KEYS[0];
-  const rank  = Math.max(1, Math.min(35, parseInt(document.getElementById('searchRank').value||'1',10)));
-  const typeFilter   = (document.getElementById('searchType')?.value || '');
+  const rank = Math.max(1, Math.min(35, parseInt(document.getElementById('searchRank').value || '1', 10)));
+  const typeFilter = (document.getElementById('searchType')?.value || '');
   const statusFilter = (document.getElementById('searchStatus')?.value || 'すべて');
-  const sortMode     = (document.getElementById('searchSort')?.value || 'no-asc');
+  const sortMode = (document.getElementById('searchSort')?.value || 'no-asc');
   const rarityFilter = (document.getElementById('searchFilterRarity')?.value || '');
   const tbody = document.querySelector('#rankSearchTable tbody');
 
@@ -1862,91 +1864,91 @@ function renderRankSearch(state) {
   }
 
   const items = [];
-    for (const row of RAW_ROWS) {
-  const rNum = getFieldRankNum(row, field);
+  for (const row of RAW_ROWS) {
+    const rNum = getFieldRankNum(row, field);
     if (!rNum || rNum > rank) continue;
     if (typeFilter && row.Style !== typeFilter) continue;
     if (rarityFilter && row.DisplayRarity !== rarityFilter) continue;
 
-  const k = rowKey(row);
-  const star = row.DisplayRarity;
-  const checkable = CHECKABLE_STARS.includes(star);
-  const isChecked = checkable ? getChecked(state, k, star) : false;
+    const k = rowKey(row);
+    const star = row.DisplayRarity;
+    const checkable = CHECKABLE_STARS.includes(star);
+    const isChecked = checkable ? getChecked(state, k, star) : false;
 
-  // 入手状況フィルター
-  if (statusFilter === '未入手') {
-    if (!checkable) continue;         // 判定不可のものは除外
-    if (isChecked) continue;          // 未入手のみ
-  } else if (statusFilter === '入手済') {
-    if (!checkable) continue;
-    if (!isChecked) continue;         // 入手済のみ
-  } else { // すべて
-    // 何でも通す（checkable じゃなくてもOK）
+    // 入手状況フィルター
+    if (statusFilter === '未入手') {
+      if (!checkable) continue;         // 判定不可のものは除外
+      if (isChecked) continue;          // 未入手のみ
+    } else if (statusFilter === '入手済') {
+      if (!checkable) continue;
+      if (!isChecked) continue;         // 入手済のみ
+    } else { // すべて
+      // 何でも通す（checkable じゃなくてもOK）
+    }
+
+    items.push(row);
   }
+  const rn = r => getFieldRankNum(r, field) ?? 999; // 念のためのフォールバック
 
-  items.push(row);
-}
-const rn = r => getFieldRankNum(r, field) ?? 999; // 念のためのフォールバック
+  const cmpNoAsc = (a, b) => a.No.localeCompare(b.No, 'ja');
+  const cmpNoDesc = (a, b) => b.No.localeCompare(a.No, 'ja');
+  const cmpNameAsc = (a, b) => a.Name.localeCompare(b.Name, 'ja');
+  const cmpNameDesc = (a, b) => b.Name.localeCompare(a.Name, 'ja');
+  const cmpRankAsc = (a, b) => rn(a) - rn(b);       // ★ 出現(必要)ランク
+  const cmpRankDesc = (a, b) => rn(b) - rn(a);
 
-const cmpNoAsc    = (a,b) => a.No.localeCompare(b.No, 'ja');
-const cmpNoDesc   = (a,b) => b.No.localeCompare(a.No, 'ja');
-const cmpNameAsc  = (a,b) => a.Name.localeCompare(b.Name, 'ja');
-const cmpNameDesc = (a,b) => b.Name.localeCompare(a.Name, 'ja');
-const cmpRankAsc  = (a,b) => rn(a) - rn(b);       // ★ 出現(必要)ランク
-const cmpRankDesc = (a,b) => rn(b) - rn(a);
+  const tieBreaker = (a, b) =>
+    cmpNoAsc(a, b) ||
+    cmpNameAsc(a, b) ||
+    (RARITIES.indexOf(a.DisplayRarity) - RARITIES.indexOf(b.DisplayRarity)) ||
+    (a.Style || '').localeCompare(b.Style || '', 'ja');
 
-const tieBreaker  = (a,b) =>
-  cmpNoAsc(a,b) ||
-  cmpNameAsc(a,b) ||
-  (RARITIES.indexOf(a.DisplayRarity) - RARITIES.indexOf(b.DisplayRarity)) ||
-  (a.Style || '').localeCompare(b.Style || '', 'ja');
+  const primary =
+    sortMode === 'no-desc' ? cmpNoDesc :
+      sortMode === 'name-asc' ? cmpNameAsc :
+        sortMode === 'name-desc' ? cmpNameDesc :
+          sortMode === 'rank-asc' ? cmpRankAsc :
+            sortMode === 'rank-desc' ? cmpRankDesc :
+              cmpNoAsc;
 
-const primary =
-  sortMode === 'no-desc'   ? cmpNoDesc   :
-  sortMode === 'name-asc'  ? cmpNameAsc  :
-  sortMode === 'name-desc' ? cmpNameDesc :
-  sortMode === 'rank-asc'  ? cmpRankAsc  :
-  sortMode === 'rank-desc' ? cmpRankDesc :
-                              cmpNoAsc;
-
-items.sort((a,b) => primary(a,b) || tieBreaker(a,b));
+  items.sort((a, b) => primary(a, b) || tieBreaker(a, b));
   if (items.length === 0) {
-  if (statusFilter === '未入手') {
-    tbody.innerHTML = `
+    if (statusFilter === '未入手') {
+      tbody.innerHTML = `
       <tr>
         <td colspan="5" class="text-center">
           <div class="completed-msg">COMPLETED</div>
           <div class="text-muted small mt-1">この条件で出現する寝顔はすべて入手済みです</div>
         </td>
       </tr>`;
-  } else {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">該当するデータがありません</td></tr>`;
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">該当するデータがありません</td></tr>`;
+    }
+
+    // ★ ここで色付けなど最低限の後処理を実行してから return
+    styleRankMiniSummary();
+    compactRankFilters();
+    shrinkRankHelpText();
+    applyStickyHeaders();
+    refreshAllSticky();
+
+    return;
   }
 
-  // ★ ここで色付けなど最低限の後処理を実行してから return
-  styleRankMiniSummary();
-  compactRankFilters();
-  shrinkRankHelpText();
-  applyStickyHeaders();
-  refreshAllSticky();
+  tbody.innerHTML = items.map(r => {
+    const needRank = getFieldRankNum(r, field);
+    const iconSvg = renderPokemonIconById(r.IconNo || getIconKeyFromNo(r.No), ICON_SIZE_FIELD);
 
-  return;
-}
+    const k = rowKey(r);
+    const star = r.DisplayRarity;
+    const checkable = CHECKABLE_STARS.includes(star);
+    const isChecked = checkable ? getChecked(state, k, star) : false;
 
-    tbody.innerHTML = items.map(r=>{
-      const needRank = getFieldRankNum(r, field);
-      const iconSvg = renderPokemonIconById(r.IconNo || getIconKeyFromNo(r.No), ICON_SIZE_FIELD);
-    
-      const k = rowKey(r);
-      const star = r.DisplayRarity;
-      const checkable = CHECKABLE_STARS.includes(star);
-      const isChecked = checkable ? getChecked(state, k, star) : false;
-    
-      // ★ この場で限定バッジを算出
-      const limitedField = getRowLimitedField(r);
-      const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
+    // ★ この場で限定バッジを算出
+    const limitedField = getRowLimitedField(r);
+    const badge = limitedField ? renderLimitedBadgeByField(limitedField) : '';
 
-  return `
+    return `
       <tr>
         <td class="byfield-name-cell text-center align-middle">
           <div class="pf-wrap">
@@ -1969,55 +1971,54 @@ items.sort((a,b) => primary(a,b) || tieBreaker(a,b));
 
       <td class="text-center">${renderRankChip(needRank)}</td>
       <td class="text-center rank-check-cell">
-        ${
-          checkable
-            ? `<div class="check-inner">
+        ${checkable
+        ? `<div class="check-inner">
                  <input type="checkbox" class="form-check-input mark-obtained"
                         data-key="${k}" data-star="${escapeHtml(star)}"
                         ${isChecked ? 'checked' : ''}>
                </div>`
-            : `<span class="text-muted">—</span>`
-        }
+        : `<span class="text-muted">—</span>`
+      }
       </td>
     </tr>`;
-}).join('');
+  }).join('');
   // ここでは再描画しない（＝行は残す）。ただしサマリーは更新。
-tbody.querySelectorAll('input.mark-obtained').forEach(chk=>{
-  chk.addEventListener('change', (e) => {
-    const key  = e.target.dataset.key;
-    const star = e.target.dataset.star;
-    const on   = e.target.checked;
-    const s = loadState();
-    setChecked(s, key, star, on);
-    syncOtherViews(key, star, on);
-    renderSummary(s);
-    updateAmberPopup(s);
+  tbody.querySelectorAll('input.mark-obtained').forEach(chk => {
+    chk.addEventListener('change', (e) => {
+      const key = e.target.dataset.key;
+      const star = e.target.dataset.star;
+      const on = e.target.checked;
+      const s = loadState();
+      setChecked(s, key, star, on);
+      syncOtherViews(key, star, on);
+      renderSummary(s);
+      updateAmberPopup(s);
 
-    // ミニ要約だけは更新する（行は消さない＝仕様どおり）
-    const fieldNow  = document.getElementById('searchField').value || FIELD_KEYS[0];
-    const rankNow   = Math.max(1, Math.min(35, parseInt(document.getElementById('searchRank').value||'1',10)));
-    const typeNow   = (document.getElementById('searchType')?.value || '');
-    const statusNow = (document.getElementById('searchStatus')?.value || 'すべて'); // ← 追加（任意）
-    const rarityNow = (document.getElementById('searchFilterRarity')?.value || '');
-    const wrap = ensureRankMiniSummaryContainer();
-    if (wrap) {
-      wrap.innerHTML = buildRankMiniSummaryHTML(fieldNow, rankNow, s, typeNow, statusNow, rarityNow) || '';
-      // ★ 差し替え直後に必ず色付け
-      styleRankMiniSummary();
-    }
-  });
-});
-
-    // ▼ボタン（逆引き）— モーダルを開く
-    tbody.querySelectorAll('button.icon-more').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        const k = e.currentTarget.dataset.entkey;
-        const ent = findEntryByEntKey(k);
-        if (ent) openFieldRankModal(ent);
-      });
+      // ミニ要約だけは更新する（行は消さない＝仕様どおり）
+      const fieldNow = document.getElementById('searchField').value || FIELD_KEYS[0];
+      const rankNow = Math.max(1, Math.min(35, parseInt(document.getElementById('searchRank').value || '1', 10)));
+      const typeNow = (document.getElementById('searchType')?.value || '');
+      const statusNow = (document.getElementById('searchStatus')?.value || 'すべて'); // ← 追加（任意）
+      const rarityNow = (document.getElementById('searchFilterRarity')?.value || '');
+      const wrap = ensureRankMiniSummaryContainer();
+      if (wrap) {
+        wrap.innerHTML = buildRankMiniSummaryHTML(fieldNow, rankNow, s, typeNow, statusNow, rarityNow) || '';
+        // ★ 差し替え直後に必ず色付け
+        styleRankMiniSummary();
+      }
     });
-  
+  });
+
+  // ▼ボタン（逆引き）— モーダルを開く
+  tbody.querySelectorAll('button.icon-more').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const k = e.currentTarget.dataset.entkey;
+      const ent = findEntryByEntKey(k);
+      if (ent) openFieldRankModal(ent);
+    });
+  });
+
   applyStickyHeaders();
   refreshAllSticky();
   styleRankMiniSummary();
@@ -2072,9 +2073,9 @@ function compactRankFilters() {
 }
 
 function compactListFilters() {
-  const af  = document.getElementById('allfacesFilters');
+  const af = document.getElementById('allfacesFilters');
   const afb = document.getElementById('allfacesBulkBar');
-  const bf  = document.getElementById('byfieldFilters');
+  const bf = document.getElementById('byfieldFilters');
   [af, afb, bf].forEach(el => el?.classList.add('filters-compact'));
   document.getElementById('fieldTabs')?.classList.add('tabs-compact'); //フィールド別のタブ群も 0.85x 縮小用クラスを付与
 }
@@ -2126,7 +2127,7 @@ async function copyToClipboard(text, fallbackTextarea) {
         fallbackTextarea.blur();
         return !!ok;
       }
-    } catch {}
+    } catch { }
     return false;
   }
 }
@@ -2144,7 +2145,7 @@ async function readClipboardSafe() {
 
 // ===================== バックアップ/復旧 =====================
 function downloadText(filename, text) {
-  const blob = new Blob([text], {type:'application/json;charset=utf-8'});
+  const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
@@ -2153,12 +2154,12 @@ function downloadText(filename, text) {
 function setupBackupUI() {
   const btnExportText = document.getElementById('btnExportText');
   const btnImportText = document.getElementById('btnImportText');
-  const ta            = document.getElementById('backupText');
+  const ta = document.getElementById('backupText');
 
   // バックアップ用テキストを作成 → 自動コピーまでやる
   btnExportText?.addEventListener('click', async () => {
     const state = loadState();
-    const text  = encodeStateToText(state);
+    const text = encodeStateToText(state);
     ta.value = text;                 // 一応テキストエリアにも表示しておく
 
     // 自動コピー（クリップボードAPI → 失敗時は textarea 経由）
@@ -2220,7 +2221,7 @@ let _listLayoutStyleInjected = false;
 function injectListLayoutCSS() {
   if (_listLayoutStyleInjected) return;
   const style = document.createElement('style');
-style.textContent = `
+  style.textContent = `
   td.name-cell { min-width: 180px; }
   td.td-bulk { width: 72px; padding-left: 4px; padding-right: 4px; }
   .bulk-group-vert .btn { display: block; width: 100%; }
@@ -2317,150 +2318,152 @@ style.textContent = `
 
 // ===================== 初期化 =====================
 async function main() {
-  injectListLayoutCSS();
+  try {
+    injectListLayoutCSS();
 
-  // サマリー用スタイル（元のまま）
-  let _summaryStyleInjected = false;
-  (function injectSummaryTableCSS(){
-    if (_summaryStyleInjected) return;
-    const style = document.createElement('style');
-    style.textContent = `
-      .summary-table { font-size: calc(1rem - 2pt); }
-      .summary-cell { text-align: center; line-height: 1.15; }
-      .summary-cell .sum-top { font-weight: 600; }
-      .summary-cell .sum-hr  { height: 1px; background: currentColor; opacity: .3; margin: 2px 12px; }
-      .summary-cell .sum-per { opacity: .75; }
-      .summary-table .field-head-icon{
-        height: 60px; width: auto; display: inline-block; vertical-align: middle;
-        image-rendering: -webkit-optimize-contrast;
-      }
-    `;
-    document.head.appendChild(style);
-    _summaryStyleInjected = true;
-  })();
+    // サマリー用スタイル
+    let _summaryStyleInjected = false;
+    (function injectSummaryTableCSS() {
+      if (_summaryStyleInjected) return;
+      const style = document.createElement('style');
+      style.textContent = `
+        .summary-table { font-size: calc(1rem - 2pt); }
+        .summary-cell { text-align: center; line-height: 1.15; }
+        .summary-cell .sum-top { font-weight: 600; }
+        .summary-cell .sum-hr  { height: 1px; background: currentColor; opacity: .3; margin: 2px 12px; }
+        .summary-cell .sum-per { opacity: .75; }
+        .summary-table .field-head-icon{
+          height: 60px; width: auto; display: inline-block; vertical-align: middle;
+          image-rendering: -webkit-optimize-contrast;
+        }
+      `;
+      document.head.appendChild(style);
+      _summaryStyleInjected = true;
+    })();
 
-  await loadPokemonIconsScriptOnce();
-  await loadData();
-  await ensureBadgeSpriteLoaded();
+    await loadPokemonIconsScriptOnce();
+    await loadData();
+    await ensureBadgeSpriteLoaded();
 
-  setupFieldTabs();
-  setupRankSearchControls();
-  ensureRankSearchHeaderHasObtainedColumn();
-  setupBackupUI();
+    setupFieldTabs();
+    setupRankSearchControls();
+    ensureRankSearchHeaderHasObtainedColumn();
+    setupBackupUI();
 
-  // === [A] 固定ブロックを「先に」組み立てる ===
-  {
-    const host = document.querySelector('#pane-allfaces .card-body');
-    const filterRow = host?.querySelector('#searchName')?.closest('.row');
-    const bulkBar   = host?.querySelector('#btnAllOn')?.closest('.d-flex');
-    setupPaneSticky('pane-allfaces', [filterRow, bulkBar]);
-  }
-  {
-    const host = document.querySelector('#pane-byfield .card-body');
-    const filterRow = host?.querySelector('#byfieldSearchName')?.closest('.row');
-    setupPaneSticky('pane-byfield', [filterRow]);
-  }
-  {
-    const mini = ensureRankMiniSummaryContainer();
-    setupPaneSticky('pane-search', [mini]);
-  }
-  
-  // ★ スマホ縮小用クラス（0.85x）を全寝顔/フィールド別にも付与
-  compactListFilters();
-
-  // === [B] いったん計測 → thead の top を適用 ===
-  refreshAllSticky();
-  applyStickyHeaders();
-
-  // === [C] 各シートを描画（ここで高さが変わる） ===
-  const state = loadState();
-
-  // ★ 保存されているフィルター状態を DOM に反映
-  applyAllfacesFiltersFromState(state);
-  applyByfieldFiltersFromState(state);
-  applyRankFiltersFromState(state);
-
-  renderSummary(state);
-  renderAllFaces(state);
-  renderFieldTables(state);
-  renderRankSearch(state);
-  updateAmberPopup(state);
-
-  // 描画により高さが変わったので、もう一度上書き
-  applyStickyHeaders();
-
-  // ▼ 全寝顔の検索・フィルタ（フィルター状態も保存）
-  const sn = document.getElementById('searchName');
-  const fs = document.getElementById('filterStyle');
-  const sb = document.getElementById('sortBy');
-  const gs = document.getElementById('allfacesGetStatus');
-
-  sn && sn.addEventListener('input', () => {
-    const st = loadState();
-    updateAllfacesFiltersFromDOM(st);
-    renderAllFaces(st);
-  });
-  fs && fs.addEventListener('change', () => {
-    const st = loadState();
-    updateAllfacesFiltersFromDOM(st);
-    renderAllFaces(st);
-  });
-  sb && sb.addEventListener('change', () => {
-    const st = loadState();
-    updateAllfacesFiltersFromDOM(st);
-    renderAllFaces(st);
-  });
-  gs && gs.addEventListener('change', () => {
-    const st = loadState();
-    updateAllfacesFiltersFromDOM(st);
-    renderAllFaces(st);
-  });
-
-// ★ 全寝顔フィルターのリセットボタン
-  const resetAllfacesBtn = document.getElementById('allfacesFilterReset');
-  resetAllfacesBtn && resetAllfacesBtn.addEventListener('click', () => {
-    const st = loadState();
-    resetAllfacesFilters(st);
-    renderAllFaces(st);
-  });
-
-// ★ フィールド別フィルターのリセットボタン
-  const resetByfieldBtn = document.getElementById('byfieldFilterReset');
-  resetByfieldBtn && resetByfieldBtn.addEventListener('click', () => {
-    const st = loadState();
-    resetByfieldFilters(st);
-    renderFieldTables(st);
-  });
-
-// ▼ 一括ON/OFF（元のまま）
-  document.getElementById('btnAllOn').addEventListener('click', ()=>{
-    if (!confirm('すべての寝顔をチェックします。よろしいですか？')) return;
-    const state = loadState();
-    for (const ent of LAST_RENDER_ENTRIES) {
-      const key = entKey(ent);
-      CHECKABLE_STARS.forEach(star=>{ if (speciesHasStar(ent, star)) setChecked(state, key, star, true); });
+    // === [A] 固定ブロックを「先に」組み立てる ===
+    {
+      const host = document.querySelector('#pane-allfaces .card-body');
+      const filterRow = host?.querySelector('#searchName')?.closest('.row');
+      const bulkBar = host?.querySelector('#btnAllOn')?.closest('.d-flex');
+      setupPaneSticky('pane-allfaces', [filterRow, bulkBar]);
     }
-    renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
+    {
+      const host = document.querySelector('#pane-byfield .card-body');
+      const filterRow = host?.querySelector('#byfieldSearchName')?.closest('.row');
+      setupPaneSticky('pane-byfield', [filterRow]);
+    }
+    {
+      const mini = ensureRankMiniSummaryContainer();
+      setupPaneSticky('pane-search', [mini]);
+    }
+
+    // ★ スマホ縮小用クラス（0.85x）を付与
+    compactListFilters();
+
+    // === [B] 計測 & 適用 ===
+    refreshAllSticky();
     applyStickyHeaders();
-  });
-  document.getElementById('btnAllOff').addEventListener('click', ()=>{
-    if (!confirm('すべての寝顔のチェックを解除します。よろしいですか？')) return;
+
+    // === [C] 各シートを描画 ===
     const state = loadState();
-    for (const ent of LAST_RENDER_ENTRIES) {
-      const key = entKey(ent);
-      CHECKABLE_STARS.forEach(star=>{ if (speciesHasStar(ent, star)) setChecked(state, key, star, false); });
-    }
+
+    applyAllfacesFiltersFromState(state);
+    applyByfieldFiltersFromState(state);
+    applyRankFiltersFromState(state);
+
+    renderSummary(state);
     renderAllFaces(state);
     renderFieldTables(state);
-    renderSummary(state);
     renderRankSearch(state);
     updateAmberPopup(state);
-    applyStickyHeaders();
-  });
 
-  // 仕上げに計測＆適用（安全策）
-  refreshAllSticky();
-  applyStickyHeaders();
+    // 描画後にもう一度計測
+    applyStickyHeaders();
+
+    // リスナー設定
+    const sn = document.getElementById('searchName');
+    const fs = document.getElementById('filterStyle');
+    const sb = document.getElementById('sortBy');
+    const gs = document.getElementById('allfacesGetStatus');
+
+    sn && sn.addEventListener('input', () => {
+      const st = loadState();
+      updateAllfacesFiltersFromDOM(st);
+      renderAllFaces(st);
+    });
+    fs && fs.addEventListener('change', () => {
+      const st = loadState();
+      updateAllfacesFiltersFromDOM(st);
+      renderAllFaces(st);
+    });
+    sb && sb.addEventListener('change', () => {
+      const st = loadState();
+      updateAllfacesFiltersFromDOM(st);
+      renderAllFaces(st);
+    });
+    gs && gs.addEventListener('change', () => {
+      const st = loadState();
+      updateAllfacesFiltersFromDOM(st);
+      renderAllFaces(st);
+    });
+
+    const resetAllfacesBtn = document.getElementById('allfacesFilterReset');
+    resetAllfacesBtn && resetAllfacesBtn.addEventListener('click', () => {
+      const st = loadState();
+      resetAllfacesFilters(st);
+      renderAllFaces(st);
+    });
+
+    const resetByfieldBtn = document.getElementById('byfieldFilterReset');
+    resetByfieldBtn && resetByfieldBtn.addEventListener('click', () => {
+      const st = loadState();
+      resetByfieldFilters(st);
+      renderFieldTables(st);
+    });
+
+    document.getElementById('btnAllOn')?.addEventListener('click', () => {
+      if (!confirm('すべての寝顔をチェックします。よろしいですか？')) return;
+      const state = loadState();
+      for (const ent of LAST_RENDER_ENTRIES) {
+        const key = entKey(ent);
+        CHECKABLE_STARS.forEach(star => { if (speciesHasStar(ent, star)) setChecked(state, key, star, true); });
+      }
+      renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
+      applyStickyHeaders();
+    });
+    document.getElementById('btnAllOff')?.addEventListener('click', () => {
+      if (!confirm('すべての寝顔のチェックを解除します。よろしいですか？')) return;
+      const state = loadState();
+      for (const ent of LAST_RENDER_ENTRIES) {
+        const key = entKey(ent);
+        CHECKABLE_STARS.forEach(star => { if (speciesHasStar(ent, star)) setChecked(state, key, star, false); });
+      }
+      renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
+      updateAmberPopup(state);
+      applyStickyHeaders();
+    });
+
+    refreshAllSticky();
+    applyStickyHeaders();
+
+  } catch (error) {
+    console.error("Initialization error:", error);
+    // ユーザーにエラーを通知
+    const alertBox = document.createElement('div');
+    alertBox.className = 'alert alert-danger m-3';
+    alertBox.innerHTML = `<strong>エラーが発生しました:</strong> ${error.message}<br><small>ブラウザのコンソールまたは GitHub の最新コードを確認してください。</small>`;
+    document.body.prepend(alertBox);
+  }
 }
 
 // タブ切替時：まず計測→次に適用
@@ -2474,29 +2477,29 @@ document.addEventListener('DOMContentLoaded', main);
 
 // 画面サイズ変化やロード完了時も毎回再適用
 window.addEventListener('resize', () => { refreshAllSticky(); applyStickyHeaders(); });
-window.addEventListener('load',   () => { refreshAllSticky(); applyStickyHeaders(); });
+window.addEventListener('load', () => { refreshAllSticky(); applyStickyHeaders(); });
 
 // ハンバーガーメニュー開閉制御
-(function(){
+(function () {
   const btn = document.getElementById("tab-menu");
   const menu = document.getElementById("hamburgerMenu");
   if (!btn || !menu) return;
 
-  btn.addEventListener("click", (e)=>{
+  btn.addEventListener("click", (e) => {
     e.stopPropagation();
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
   });
 
   // 外側クリックで閉じる
-  document.addEventListener("click", (e)=>{
+  document.addEventListener("click", (e) => {
     if (!menu.contains(e.target) && e.target !== btn) {
       menu.style.display = "none";
     }
   });
-  
+
   // メニュークリック時に対象タブをアクティブ化
-  document.querySelectorAll("#hamburgerMenu .hamburger-item").forEach(a=>{
-    a.addEventListener("click", (e)=>{
+  document.querySelectorAll("#hamburgerMenu .hamburger-item").forEach(a => {
+    a.addEventListener("click", (e) => {
       e.preventDefault();
       const target = document.querySelector(a.getAttribute("href"));
       if (target) {
@@ -2521,7 +2524,7 @@ function afterRenderRankSearch() {
   // 必要DOMを保証（無ければ生成）
   function ensureHowtoDOM() {
     let backdrop = document.getElementById('howtoBackdrop');
-    let sheet    = document.getElementById('howtoSheet');
+    let sheet = document.getElementById('howtoSheet');
 
     if (!backdrop) {
       backdrop = document.createElement('div');
@@ -2581,7 +2584,7 @@ function afterRenderRankSearch() {
 
   function closeHowto() {
     const backdrop = document.getElementById('howtoBackdrop');
-    const sheet    = document.getElementById('howtoSheet');
+    const sheet = document.getElementById('howtoSheet');
     if (!backdrop || !sheet) return;
     sheet.classList.remove('show');
     backdrop.classList.remove('show');
@@ -2625,10 +2628,10 @@ function afterRenderRankSearch() {
 // ==== PWA Install Banner (deferred prompt) ====
 
 // バナー要素
-const pwaBanner     = document.getElementById('pwaBanner');
+const pwaBanner = document.getElementById('pwaBanner');
 const pwaInstallBtn = document.getElementById('pwaInstallBtn');
-const pwaCloseBtn   = document.getElementById('pwaCloseBtn');
-const pwaIosHint    = document.getElementById('pwaIosHint');
+const pwaCloseBtn = document.getElementById('pwaCloseBtn');
+const pwaIosHint = document.getElementById('pwaIosHint');
 
 let _deferredInstallEvt = null;
 const _LS_HIDE_KEY = 'pwa-banner-hidden';
@@ -2638,7 +2641,7 @@ const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
 // バナー表示/非表示
-function showPwaBanner(){
+function showPwaBanner() {
   if (!pwaBanner) return;
   if (localStorage.getItem(_LS_HIDE_KEY) === '1') return; // ユーザーが閉じたら出さない
 
@@ -2657,7 +2660,7 @@ function showPwaBanner(){
     pwaBanner.classList.remove('d-none');
   }
 }
-function hidePwaBanner(){
+function hidePwaBanner() {
   pwaBanner?.classList.add('d-none');
 }
 
