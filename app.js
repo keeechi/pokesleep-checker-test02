@@ -2393,42 +2393,27 @@ async function main() {
     renderAllFaces(state);
     renderFieldTables(state);
     renderRankSearch(state);
-    renderSummary(state);
-    renderAllFaces(state);
-    renderFieldTables(state);
-    renderRankSearch(state);
 
     // 描画後にもう一度計測
     applyStickyHeaders();
 
     // --- [D] リスナー設定 ---
 
-    // 全寝顔フィルター
+    // 1) 全寝顔フィルター
     const sn = document.getElementById('searchName');
     const fs = document.getElementById('filterStyle');
     const sb = document.getElementById('sortBy');
     const gs = document.getElementById('allfacesGetStatus');
 
-    sn && sn.addEventListener('input', () => {
+    const updateAll = () => {
       const st = loadState();
       updateAllfacesFiltersFromDOM(st);
       renderAllFaces(st);
-    });
-    fs && fs.addEventListener('change', () => {
-      const st = loadState();
-      updateAllfacesFiltersFromDOM(st);
-      renderAllFaces(st);
-    });
-    sb && sb.addEventListener('change', () => {
-      const st = loadState();
-      updateAllfacesFiltersFromDOM(st);
-      renderAllFaces(st);
-    });
-    gs && gs.addEventListener('change', () => {
-      const st = loadState();
-      updateAllfacesFiltersFromDOM(st);
-      renderAllFaces(st);
-    });
+    };
+    sn && sn.addEventListener('input', updateAll);
+    fs && fs.addEventListener('change', updateAll);
+    sb && sb.addEventListener('change', updateAll);
+    gs && gs.addEventListener('change', updateAll);
 
     const resetAllfacesBtn = document.getElementById('allfacesFilterReset');
     resetAllfacesBtn && resetAllfacesBtn.addEventListener('click', () => {
@@ -2437,69 +2422,82 @@ async function main() {
       renderAllFaces(st);
     });
 
-    // フィールド別フィルター
+    // 2) フィールド別フィルター
     const bsn = document.getElementById('byfieldSearchName');
     const bfs = document.getElementById('byfieldFilterStyle');
     const bsb = document.getElementById('byfieldSortBy');
     const bgs = document.getElementById('byfieldGetStatus');
 
-    bsn && bsn.addEventListener('input', () => {
+    const updateByf = () => {
       const st = loadState();
       updateByfieldFiltersFromDOM(st);
       renderFieldTables(st);
-    });
-    bfs && bfs.addEventListener('change', () => {
-      const st = loadState();
-      updateByfieldFiltersFromDOM(st);
-      renderFieldTables(st);
-    });
-    bsb && bsb.addEventListener('change', () => {
-      const st = loadState();
-      updateByfieldFiltersFromDOM(st);
-      renderFieldTables(st);
-    });
-    bgs && bgs.addEventListener('change', () => {
-      const st = loadState();
-      updateByfieldFiltersFromDOM(st);
-      renderFieldTables(st);
-    });
+    };
+    bsn && bsn.addEventListener('input', updateByf);
+    bfs && bfs.addEventListener('change', updateByf);
+    bsb && bsb.addEventListener('change', updateByf);
+    bgs && bgs.addEventListener('change', updateByf);
 
+    const resetByfieldBtn = document.getElementById('byfieldFilterReset');
     resetByfieldBtn && resetByfieldBtn.addEventListener('click', () => {
       const st = loadState();
       resetByfieldFilters(st);
       renderFieldTables(st);
     });
 
-    // 未取得寝顔の早見表（モーダル）
+    // 3) 未取得寝顔の早見表（モーダル）
     const qmBtn = document.getElementById('tab-quickmissing');
-    qmBtn && qmBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      openQuickMissingPopup(loadState());
-    });
+    if (qmBtn) {
+      // 既存のリスナーがあれば衝突を防ぐため、一度クリア...はできないので注意して貼る
+      qmBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openQuickMissingPopup(loadState());
+      });
+    }
 
-    // 逆引き（検索）フィルター：これらは buildReverseFilterBar で設定されるはずだが、念のため。
-    // ※ 実際には buildReverseFilterBar 内でイベントリスナーが貼られている。
-
+    // 4) 一括ON/OFF
     document.getElementById('btnAllOn')?.addEventListener('click', () => {
-      if (!confirm('すべての寝顔をチェックします。よろしいですか？')) return;
+      if (!confirm('現在の絞り込み結果に含まれる全ての寝顔をチェックします。よろしいですか？')) return;
       const state = loadState();
+      let changed = false;
       for (const ent of LAST_RENDER_ENTRIES) {
         const key = entKey(ent);
-        CHECKABLE_STARS.forEach(star => { if (speciesHasStar(ent, star)) setChecked(state, key, star, true); });
+        if (!state.checked[key]) state.checked[key] = {};
+        CHECKABLE_STARS.forEach(star => {
+          if (speciesHasStar(ent, star) && !state.checked[key][star]) {
+            state.checked[key][star] = true;
+            changed = true;
+          }
+        });
       }
-      renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
-      applyStickyHeaders();
+      if (changed) {
+        saveState(state);
+        renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
+        applyStickyHeaders();
+      }
     });
+
     document.getElementById('btnAllOff')?.addEventListener('click', () => {
-      if (!confirm('すべての寝顔のチェックを解除します。よろしいですか？')) return;
+      if (!confirm('現在の絞り込み結果に含まれる全ての寝顔のチェックを解除します。よろしいですか？')) return;
       const state = loadState();
+      let changed = false;
       for (const ent of LAST_RENDER_ENTRIES) {
         const key = entKey(ent);
-        CHECKABLE_STARS.forEach(star => { if (speciesHasStar(ent, star)) setChecked(state, key, star, false); });
+        if (state.checked[key]) {
+          CHECKABLE_STARS.forEach(star => {
+            if (state.checked[key][star]) {
+              state.checked[key][star] = false;
+              changed = true;
+            }
+          });
+        }
       }
-      renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
-      applyStickyHeaders();
+      if (changed) {
+        saveState(state);
+        renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
+        applyStickyHeaders();
+      }
     });
 
     refreshAllSticky();
