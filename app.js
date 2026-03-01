@@ -316,14 +316,7 @@ function openQuickMissingPopup(state) {
   modal.show();
 }
 
-// タブクリックでモーダルを開く（HowToと同じパターン）
-document.addEventListener('click', function (e) {
-  const btn = e.target.closest('#tab-quickmissing');
-  if (!btn) return;
-  e.preventDefault();
-  e.stopPropagation();
-  openQuickMissingPopup(loadState());
-}, true);
+// (Moved to main() for robustness)
 
 // ==== 固定（sticky）ユーティリティ ====
 
@@ -1372,7 +1365,7 @@ function renderAllFaces(state) {
       syncOtherViews(key, star, e.target.checked);  // ← 他シートへ差分同期
       renderSummary(state);
       renderRankSearch(state);
-      updateAmberPopup(state);
+      // updateAmberPopup(state);
       // ▼ 追加：取得状況フィルター中なら全体を再描画して行の見え方を更新
       if ((document.getElementById('allfacesGetStatus')?.value || 'すべて') !== 'すべて') {
         renderAllFaces(loadState());
@@ -1395,7 +1388,7 @@ function renderAllFaces(state) {
       });
       renderSummary(state);
       renderRankSearch(state);
-      updateAmberPopup(state);
+      // updateAmberPopup(state);
     });
   });
   // ▼ボタン：出現フィールド・ランクのミニ表（モーダル）
@@ -1607,7 +1600,7 @@ function renderFieldTables(state) {
         syncOtherViews(key, star, !now);
         renderSummary(state);
         renderRankSearch(state);
-        updateAmberPopup(state);
+        // updateAmberPopup(state);
 
         if ((document.getElementById('byfieldGetStatus')?.value || 'すべて') !== 'すべて') {
           renderFieldTables(loadState());
@@ -2007,7 +2000,7 @@ function renderRankSearch(state) {
       setChecked(s, key, star, on);
       syncOtherViews(key, star, on);
       renderSummary(s);
-      updateAmberPopup(s);
+      // updateAmberPopup(s);
 
       // ミニ要約だけは更新する（行は消さない＝仕様どおり）
       const fieldNow = document.getElementById('searchField').value || FIELD_KEYS[0];
@@ -2221,7 +2214,7 @@ function setupBackupUI() {
       renderFieldTables(state);
       renderSummary(state);
       renderRankSearch(state);
-      updateAmberPopup(state);
+      // updateAmberPopup(state);
 
       alert('復旧しました！（クリップボード／テキスト）');
     } catch (e) {
@@ -2400,12 +2393,17 @@ async function main() {
     renderAllFaces(state);
     renderFieldTables(state);
     renderRankSearch(state);
-    updateAmberPopup(state);
+    renderSummary(state);
+    renderAllFaces(state);
+    renderFieldTables(state);
+    renderRankSearch(state);
 
     // 描画後にもう一度計測
     applyStickyHeaders();
 
-    // リスナー設定
+    // --- [D] リスナー設定 ---
+
+    // 全寝顔フィルター
     const sn = document.getElementById('searchName');
     const fs = document.getElementById('filterStyle');
     const sb = document.getElementById('sortBy');
@@ -2439,12 +2437,49 @@ async function main() {
       renderAllFaces(st);
     });
 
-    const resetByfieldBtn = document.getElementById('byfieldFilterReset');
+    // フィールド別フィルター
+    const bsn = document.getElementById('byfieldSearchName');
+    const bfs = document.getElementById('byfieldFilterStyle');
+    const bsb = document.getElementById('byfieldSortBy');
+    const bgs = document.getElementById('byfieldGetStatus');
+
+    bsn && bsn.addEventListener('input', () => {
+      const st = loadState();
+      updateByfieldFiltersFromDOM(st);
+      renderFieldTables(st);
+    });
+    bfs && bfs.addEventListener('change', () => {
+      const st = loadState();
+      updateByfieldFiltersFromDOM(st);
+      renderFieldTables(st);
+    });
+    bsb && bsb.addEventListener('change', () => {
+      const st = loadState();
+      updateByfieldFiltersFromDOM(st);
+      renderFieldTables(st);
+    });
+    bgs && bgs.addEventListener('change', () => {
+      const st = loadState();
+      updateByfieldFiltersFromDOM(st);
+      renderFieldTables(st);
+    });
+
     resetByfieldBtn && resetByfieldBtn.addEventListener('click', () => {
       const st = loadState();
       resetByfieldFilters(st);
       renderFieldTables(st);
     });
+
+    // 未取得寝顔の早見表（モーダル）
+    const qmBtn = document.getElementById('tab-quickmissing');
+    qmBtn && qmBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openQuickMissingPopup(loadState());
+    });
+
+    // 逆引き（検索）フィルター：これらは buildReverseFilterBar で設定されるはずだが、念のため。
+    // ※ 実際には buildReverseFilterBar 内でイベントリスナーが貼られている。
 
     document.getElementById('btnAllOn')?.addEventListener('click', () => {
       if (!confirm('すべての寝顔をチェックします。よろしいですか？')) return;
@@ -2464,7 +2499,6 @@ async function main() {
         CHECKABLE_STARS.forEach(star => { if (speciesHasStar(ent, star)) setChecked(state, key, star, false); });
       }
       renderAllFaces(state); renderFieldTables(state); renderSummary(state); renderRankSearch(state);
-      updateAmberPopup(state);
       applyStickyHeaders();
     });
 
