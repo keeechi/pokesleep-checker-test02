@@ -350,6 +350,7 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./pokemon_data.js"></script>
   <script src="./app.js" defer></script>
 
   <div id="howtoBackdrop" class="howto-backdrop" hidden></div>
@@ -373,6 +374,111 @@
         <li>「フィールド」「ランク」や「取得状況」などから検索ができます。</li>
       </ul>
     </div>
+  </div>
+  <!-- Badge SVGs (Inlined to avoid fetch in local file protocol) -->
+  <div id="badge-sprite-20" style="display:none">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <symbol id="lb20-wakakusa" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#98fb98" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-cyan" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#87cefa" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-taupe" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#deb887" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-unohana" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#f0f8ff" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-rapis" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#7fffd4" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-gold" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#ffff00" stroke="#000000"
+          stroke-width="1.5" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-wakakusaex" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#98fb98" stroke="#000000"
+          stroke-width="1" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb20-amber" viewBox="0 0 20 20">
+        <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="3.5" ry="3.5" fill="#f5deb3" stroke="#000000"
+          stroke-width="1" /><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+    </svg>
+  </div>
+  <div id="badge-sprite-16" style="display:none">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <symbol id="lb16-wakakusa" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#98fb98" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-cyan" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#87cefa" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-taupe" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#deb887" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-unohana" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#f0f8ff" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-rapis" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#7fffd4" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-gold" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#ffff00" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-wakakusaex" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#98fb98" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+      <symbol id="lb16-amber" viewBox="0 0 16 16">
+        <rect x="0.5" y="0.5" width="15" height="15" rx="3" ry="3" fill="#f5deb3" stroke="#000000" stroke-width="1" />
+        <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle"
+          font-family="'M PLUS Rounded 1c','Hiragino Maru Gothic Pro','Noto Sans JP',Meiryo,sans-serif"
+          font-weight="700" font-size="10" fill="#000000">限</text>
+      </symbol>
+    </svg>
   </div>
 </body>
 

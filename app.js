@@ -459,21 +459,31 @@ let _badgeSpriteLoaded20 = false;
 
 async function ensureBadgeSpriteLoaded() {
   const want20 = _isDesktop();
-  const url = want20 ? BADGE_SPRITE_20 : BADGE_SPRITE_16;
   const flag = want20 ? '_badgeSpriteLoaded20' : '_badgeSpriteLoaded16';
 
   if (want20 && _badgeSpriteLoaded20) return;
   if (!want20 && _badgeSpriteLoaded16) return;
 
+  const id = want20 ? 'badge-sprite-20' : 'badge-sprite-16';
+  const el = document.getElementById(id);
+  if (el) {
+    if (want20) _badgeSpriteLoaded20 = true; else _badgeSpriteLoaded16 = true;
+    return;
+  }
+
+  // Fallback (for server environments if inlining missed)
   try {
+    const url = want20 ? BADGE_SPRITE_20 : BADGE_SPRITE_16;
     const res = await fetch(url, { cache: 'force-cache' });
     const txt = await res.text();
     const wrap = document.createElement('div');
     wrap.style.display = 'none';
-    wrap.innerHTML = txt;            // ← <svg><symbol ...> がそのまま入る
+    wrap.innerHTML = txt;
     document.body.appendChild(wrap);
     if (want20) _badgeSpriteLoaded20 = true; else _badgeSpriteLoaded16 = true;
-  } catch (e) { console.error('badge sprite load failed:', e); }
+  } catch (e) {
+    console.error('badge sprite load failed:', e);
+  }
 }
 
 // ====== 固定ヘッダー（iOS安定版：GPU transform + rAF + DPR丸め） ======
@@ -936,8 +946,13 @@ let RAW_ROWS = [];
 let SPECIES_MAP = new Map();  // key: `${No}__${Name}` → 形態ごと
 
 async function loadData() {
-  const res = await fetch(DATA_URL);
-  const json = await res.json();
+  let json;
+  if (window.POKEMON_DATA) {
+    json = window.POKEMON_DATA;
+  } else {
+    const res = await fetch(DATA_URL);
+    json = await res.json();
+  }
   const rows = Array.isArray(json) ? json : (json['すべての寝顔一覧'] || []);
   RAW_ROWS = rows.map(r => ({
     ID: r.ID,
