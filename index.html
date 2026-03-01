@@ -20,11 +20,6 @@
   <link rel="icon" sizes="192x192" href="./assets/icons/app-icon-192.png">
   <link rel="icon" sizes="512x512" href="./assets/icons/app-icon-512.png">
 
-  <!-- 既存 -->
-  <!-- <script src="app.js" defer></script> -->
-
-  <!-- 追加の軽いスタイル（必要なら既存style.cssに移動OK） -->
-
   <style>
     :root {
       --cell-checked-bg: rgba(13, 110, 253, .1);
@@ -45,11 +40,9 @@
     .cell-absent {
       color: #adb5bd;
     }
-
-    /* 存在しない寝顔（チェックボックス自体を出さない） */
   </style>
 
-  <link rel="stylesheet" href="./style.css"><!-- あれば -->
+  <link rel="stylesheet" href="./style.css">
 </head>
 
 <body class="bg-light">
@@ -75,7 +68,8 @@
         </div>
       </div>
     </div>
-    <!-- Summary（タイトル行は削除） -->
+
+    <!-- Summary -->
     <section id="summary" class="mb-3">
       <div class="card">
         <div class="card-body">
@@ -109,7 +103,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link tab-icon" id="tab-byfield" data-bs-toggle="tab" data-bs-target="#pane-byfield"
-            type="button" role="tab" aria-selected="false" role="tab" aria-label="フィールド別寝顔一覧" title="フィールド別寝顔一覧">
+            type="button" role="tab" aria-selected="false" aria-label="フィールド別寝顔一覧" title="フィールド別寝顔一覧">
             <span class="tab-inner">
               <img class="tab-img" src="assets/icons/tabs/icon_tab_02.png" alt="">
               <span class="tab-label">
@@ -121,8 +115,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link tab-icon" id="tab-search" data-bs-toggle="tab" data-bs-target="#pane-search"
-            type="button" role="tab" aria-selected="false" role="tab" aria-label="現在のフィールド・ランクから検索"
-            title="現在のフィールド・ランクから検索">
+            type="button" role="tab" aria-selected="false" aria-label="現在のフィールド・ランクから検索" title="現在のフィールド・ランクから検索">
             <span class="tab-inner">
               <img class="tab-img" src="assets/icons/tabs/icon_tab_03.png" alt="">
               <span class="tab-label">
@@ -133,8 +126,6 @@
             </span>
           </button>
         </li>
-
-        <!-- ▼ 新タブ：未取得寝顔の早見表（ポップアップ起動用） -->
         <li class="nav-item" role="presentation">
           <button class="nav-link tab-icon" id="tab-quickmissing" type="button" role="tab" aria-selected="false"
             aria-label="未取得寝顔の早見表" title="未取得寝顔の早見表">
@@ -148,8 +139,6 @@
             </span>
           </button>
         </li>
-
-        <!-- ハンバーガー -->
         <li class="nav-item nav-item--more" role="presentation">
           <button class="nav-link tab-icon" id="tab-menu" type="button" aria-label="その他機能" title="その他機能"
             data-bs-toggle="offcanvas" data-bs-target="#moreSheet" aria-controls="moreSheet">
@@ -157,7 +146,7 @@
           </button>
         </li>
       </ul>
-    </div> <!-- ★ ここで mainTabsWrap を閉じる -->
+    </div>
 
     <div class="tab-content pb-5" id="mainTabsContent">
       <!-- 全寝顔チェックシート -->
@@ -194,14 +183,12 @@
                   <option value="コンプリート済">コンプリート済</option>
                   <option value="未取得あり">未取得あり</option>
                 </select>
-                <!-- ★ フィルターリセットボタン -->
                 <button id="allfacesFilterReset" type="button" class="btn btn-outline-secondary btn-sm mt-2 w-100">
                   フィルターをリセット
                 </button>
               </div>
             </div>
 
-            <!-- 全体一括ON/OFF（確認ダイアログは維持） -->
             <div class="d-flex flex-wrap gap-2 mb-2" id="allfacesBulkBar">
               <button id="btnAllOn" class="btn btn-outline-primary btn-sm">すべて一括ON</button>
               <button id="btnAllOff" class="btn btn-outline-secondary btn-sm">すべて一括OFF</button>
@@ -261,7 +248,6 @@
                   <option value="コンプリート済">コンプリート済</option>
                   <option value="未取得あり">未取得あり</option>
                 </select>
-                <!-- ★ フィルターリセットボタン -->
                 <button id="byfieldFilterReset" type="button" class="btn btn-outline-secondary btn-sm mt-2 w-100">
                   フィルターをリセット
                 </button>
@@ -287,7 +273,6 @@
                 <select id="searchRank" class="form-select"></select>
               </div>
             </div>
-            <!-- <p class="text-muted small mb-2">選択ランク以下で出現する「未入手」の寝顔のみ表示します。</p> -->
             <div class="table-responsive">
               <table class="table table-sm align-middle table-hover mb-0" id="rankSearchTable">
                 <thead class="table-light sticky-header">
@@ -313,7 +298,6 @@
               <button id="btnExportText" class="btn btn-primary">バックアップ用テキストを作成</button>
               <button id="btnImportText" class="btn btn-outline-primary">テキストから復旧</button>
             </div>
-
             <div class="mb-2">
               <textarea id="backupText" class="form-control" rows="4"
                 placeholder="ここにバックアップ用テキストが表示されます。復旧する場合は、ここに貼り付けて『テキストから復旧』を押してください。"></textarea>
@@ -324,7 +308,6 @@
           </div>
         </div>
       </div>
-    </div>
     </div>
   </main>
 
@@ -343,9 +326,6 @@
       <div class="list-group list-group-flush">
         <a href="#" class="list-group-item list-group-item-action" data-open-pane="#pane-backup"
           data-bs-dismiss="offcanvas">バックアップ</a>
-        <!-- 追加したい機能は下に足すだけ -->
-        <!-- <a href="#" class="list-group-item list-group-item-action"
-             data-open-pane="#pane-sample" data-bs-dismiss="offcanvas">新機能サンプル01</a> -->
       </div>
     </div>
   </div>
@@ -355,17 +335,12 @@
       const a = e.target.closest('[data-open-pane]');
       if (!a) return;
       e.preventDefault();
-
       const sel = a.getAttribute('data-open-pane');
       const pane = document.querySelector(sel);
       if (!pane) return;
-
-      // 既存アクティブを解除して対象パネルを表示
       document.querySelector('#mainTabs .nav-link.active')?.classList.remove('active');
       document.querySelector('.tab-pane.show.active')?.classList.remove('show', 'active');
       pane.classList.add('show', 'active');
-
-      // タブの直下まで軽くスクロール（好みで）
       const wrap = document.getElementById('mainTabsWrap');
       if (wrap) {
         const y = wrap.getBoundingClientRect().bottom + window.pageYOffset + 8;
@@ -389,22 +364,16 @@
       <ul class="howto-list small">
         <li>このシートから取得チェック(ON/OFF)を切り替えられます。</li>
       </ul>
-
       <p class="howto-sec-title"><b>フィールド別寝顔一覧</b></p>
       <ul class="howto-list small">
         <li>各フィールドで出現する寝顔の一覧を確認できます。</li>
-        <li>このシートからも取得チェック(ON/OFF)を切り替えられます。</li>
       </ul>
-
       <p class="howto-sec-title"><b>フィールド・ランクから検索</b></p>
       <ul class="howto-list small">
         <li>「フィールド」「ランク」や「取得状況」などから検索ができます。</li>
-        <li>このシートからも取得チェック(ON/OFF)を切り替えられます。</li>
-        <li>未取得の寝顔数などを確認しつつ「今日はどの睡眠タイプを狙おうか」といった使い方もしてみてください。</li>
       </ul>
     </div>
   </div>
-
 </body>
 
 </html>
