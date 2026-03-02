@@ -25,6 +25,12 @@ const FIELD_SHORT = {
 const SLEEP_TYPES = ['うとうと', 'すやすや', 'ぐっすり'];
 const RARITIES = ['☆1', '☆2', '☆3', '☆4', '☆5']; // 表示用
 const CHECKABLE_STARS = ['☆1', '☆2', '☆3', '☆4'];   // チェック対象
+const _AMBER_ROWS = [
+  { label: 'ノーマル', from: 1, to: 5, labelStage: 'ノーマル' },
+  { label: 'スーパー', from: 6, to: 10, labelStage: 'スーパー' },
+  { label: 'ハイパー', from: 11, to: 15, labelStage: 'ハイパー' },
+  { label: 'マスター', from: 16, to: 35, labelStage: 'マスター' }
+];
 const STYLE_ICON = {
   'うとうと': 'assets/icons/Table_Icons/01-uto-v2.png',
   'すやすや': 'assets/icons/Table_Icons/02-suya-v2.png',
@@ -286,10 +292,107 @@ let _qmModalEl = null, _qmModal = null;
 // (Modal removed in transition to full tab)
 
 function renderQuickMissingTable(state) {
-  const wrap = document.getElementById('quickMissingMiniTableBody');
-  if (!wrap) return;
-  wrap.innerHTML = buildQuickMissingTable(state);
-  styleRankMiniSummary();
+  const wrapGrid = document.getElementById('quickMissingMiniTableBody');
+  if (wrapGrid) {
+    wrapGrid.innerHTML = buildQuickMissingTable(state);
+    styleRankMiniSummary();
+  }
+  renderQuickMissingList(state, document.getElementById('quickMissingSearch')?.value || '');
+}
+
+function renderQuickMissingList(state, query = '') {
+  const tbodyContainer = document.getElementById('quickMissingListTableBody');
+  if (!tbodyContainer) return;
+
+  const normQuery = normalizeJP(query);
+
+  // 未取得が少なくとも1つある種を抽出
+  let entries = Array.from(SPECIES_MAP.values()).filter(ent => {
+    if (isEntryComplete(state, ent)) return false;
+    if (normQuery && !normalizeJP(ent.name).includes(normQuery)) return false;
+    return true;
+  });
+
+  // No順
+  entries.sort((a, b) => a.no.localeCompare(b.no, 'ja'));
+
+  if (entries.length === 0) {
+    tbodyContainer.innerHTML = '<p class="text-muted p-3 text-center">表示対象の未取得寝顔はありません。</p>';
+    return;
+  }
+
+  // テーブル生成
+  const html = `
+    <div class="table-responsive">
+      <table class="table table-sm align-middle table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="min-width:140px;">ポケモン</th>
+            <th class="text-center">☆1</th>
+            <th class="text-center">☆2</th>
+            <th class="text-center">☆3</th>
+            <th class="text-center">☆4</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${entries.map(ent => {
+    const key = entKey(ent);
+    const cells = CHECKABLE_STARS.map(star => {
+      const hasStar = speciesHasStar(ent, star);
+      if (!hasStar) return '<td class="text-center text-muted">-</td>';
+
+      const isChecked = getChecked(state, key, star);
+      const checkedAttr = isChecked ? 'checked' : '';
+      const tdCls = isChecked ? 'cell-checked' : '';
+
+      return `
+                <td class="text-center toggle-cell ${tdCls}" data-key="${key}" data-star="${star}">
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input" type="checkbox" data-key="${key}" data-star="${star}" ${checkedAttr}>
+                  </div>
+                </td>`;
+    }).join('');
+
+    return `
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    ${renderPokemonIconById(ent.iconNo || ent.no, 32)}
+                    <div>
+                      <div class="small text-muted" style="font-size:0.7rem;">No.${ent.no}</div>
+                      <div class="fw-bold" style="font-size:0.9rem;">${ent.name}</div>
+                    </div>
+                  </div>
+                </td>
+                ${cells}
+              </tr>`;
+  }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  tbodyContainer.innerHTML = html;
+
+  // イベントリスナー
+  tbodyContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+    chk.addEventListener('change', (e) => {
+      const k = e.target.dataset.key;
+      const s = e.target.dataset.star;
+      const on = e.target.checked;
+      setChecked(state, k, s, on);
+      syncOtherViews(k, s, on);
+      renderSummary(state);
+      renderRankSearch(state);
+      // カウント表も更新
+      const wrapGrid = document.getElementById('quickMissingMiniTableBody');
+      if (wrapGrid) {
+        wrapGrid.innerHTML = buildQuickMissingTable(state);
+        styleRankMiniSummary();
+      }
+      // リスト自身のセルの色を更新（同期の仕組みで既にやってるはずだが念押し）
+      e.target.closest('td')?.classList.toggle('cell-checked', on);
+    });
+  });
 }
 
 // (Moved to main() for robustness)
@@ -898,8 +1001,15 @@ function syncOtherViews(key, star, on) {
     td.classList.toggle('cell-checked', on);
   });
 
-  // 3) 逆引き（未入手のみ表示）は仕様どおり「その場では行を消さない」ので何もしない
-  //    （サマリー＆ミニ要約は既存コードで更新済み）
+  // 3) 未取得寝顔の早見表（一覧表の方）
+  document.querySelectorAll(
+    `#quickMissingListTableBody input[type="checkbox"][data-key="${key}"][data-star="${star}"]`
+  ).forEach(el => {
+    if (el.checked !== on) {
+      el.checked = on;
+      el.closest('td')?.classList.toggle('cell-checked', on);
+    }
+  });
 }
 
 function setChecked(state, key, star, val) {
@@ -2421,16 +2531,20 @@ async function main() {
       renderFieldTables(st);
     });
 
-    // 3) 未取得寝顔の早見表（モーダル）
-    const qmBtn = document.getElementById('tab-quickmissing');
-    if (qmBtn) {
-      // 既存のリスナーがあれば衝突を防ぐため、一度クリア...はできないので注意して貼る
-      qmBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openQuickMissingPopup(loadState());
-      });
-    }
+    // 3) 未取得寝顔の早見表
+    const qms = document.getElementById('quickMissingSearch');
+    qms && qms.addEventListener('input', () => {
+      const st = loadState();
+      renderQuickMissingList(st, qms.value);
+    });
+    const qmr = document.getElementById('quickMissingFilterReset');
+    qmr && qmr.addEventListener('click', () => {
+      if (qms) qms.value = '';
+      const st = loadState();
+      renderQuickMissingList(st, '');
+    });
+
+    // (Listening via mainTabs shown.bs.tab)
 
     // 4) 一括ON/OFF
     document.getElementById('btnAllOn')?.addEventListener('click', () => {
